@@ -7,7 +7,9 @@ namespace App\Services;
 use App\Helpers\CacheHelper;
 use App\Jobs\RefreshTokenJob;
 use App\Modules\Google\ApiClient;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class TokenService
 {
@@ -33,6 +35,7 @@ class TokenService
         $savedRefresh = Cache::put(CacheHelper::CACHE_REFRESH_TOKEN_KEY . $userId, $data['refresh_token']);
 
         if ($savedAccess && $savedRefresh) {
+            Log::info('Tokens saved. Next refreshing - ' . Carbon::now()->addSeconds($data['expires_in'])->format('d.m.y H:m:s'));
             $this->scheduleRefreshToken($data['expires_in'], $userId);
             return true;
         }
