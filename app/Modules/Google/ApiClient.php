@@ -31,7 +31,7 @@ class ApiClient
         $position = '🧑‍💻 ' . current($sheet['data'])['rowData'][1]['values'][1]['formattedValue'] . ' (' . $positionStatus . ')' . PHP_EOL;
 
         $trackedValue = current($sheet['data'])['rowData'][9]['values'][1]['formattedValue'];
-        $trackedType = plural_form($trackedValue, ['час', 'часа', 'часов']);
+        $trackedType = plural_form((int)$trackedValue, ['час', 'часа', 'часов']);
         $tracked = '⏱ ' . $trackedValue . ' ' . $trackedType . PHP_EOL;
 
         $salary = '💸 ' . current($sheet['data'])['rowData'][3]['values'][8]['formattedValue'] . PHP_EOL;
