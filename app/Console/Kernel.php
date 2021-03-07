@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\DailyStatisticCommand;
+use App\Console\Commands\RefreshToken;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
@@ -14,7 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        DailyStatisticCommand::class
+        DailyStatisticCommand::class,
+        RefreshToken::class
     ];
 
     /**

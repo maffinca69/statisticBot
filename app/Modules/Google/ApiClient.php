@@ -6,15 +6,12 @@ use App\Parsers\GoogleSpreadSheetParser;
 use App\Parsers\ParserInterface;
 use App\Services\TokenService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ApiClient
 {
     private const API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/';
     private const API_TOKEN_URL = 'https://oauth2.googleapis.com/token';
-
-    /**
-     * User spreadsheetID. Unique
-     */
 
     /**
      * @param    int    $userid
@@ -48,6 +45,8 @@ class ApiClient
             'grant_type' => $grandType,
             'refresh_token' => $refreshToken,
         ]);
+
+        Log::info($response->json());
 
         (new TokenService($this))->saveToken($response->json(), $userId);
     }
