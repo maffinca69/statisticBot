@@ -28,11 +28,7 @@ class Controller extends BaseController
         $username = config('bot.username');
 
         $this->telegram = new Telegram(config('bot.api_key'), $username);
-//        $commands_paths = [
-//            __DIR__ . '/../../Commands',
-//        ];
         $this->telegram->useGetUpdatesWithoutDatabase();
-//        $this->telegram->addCommandsPaths($commands_paths, false);
 
         $this->update = new Update($data, $username);
     }

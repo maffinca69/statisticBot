@@ -30,7 +30,7 @@ services:
       - "3306:3306"
   redis:
     image: redis:alpine
-    command: redis-server --appendonly yes
+    command: redis-server
     volumes:
       - ./data/redis:/data
     ports:

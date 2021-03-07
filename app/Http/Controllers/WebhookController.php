@@ -6,8 +6,11 @@ namespace App\Http\Controllers;
 
 use App\Services\BotService;
 use App\Services\TokenService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request as TelegramRequest;
 
 class WebhookController extends Controller
@@ -21,9 +24,16 @@ class WebhookController extends Controller
         $this->tokenService = $tokenService;
     }
 
+    /**
+     * Bot webhook function
+     *
+     * @param    Request    $request
+     * @return ServerResponse|void
+     */
     public function handle(Request $request)
     {
         parent::handle($request);
+
 
         if ($response = $this->botService->execute($this->update)) {
             return $response;
@@ -32,6 +42,11 @@ class WebhookController extends Controller
         return TelegramRequest::emptyResponse();
     }
 
+    /**
+     * Update access_token (refresh token)
+     *
+     * @return JsonResponse|ServerResponse
+     */
     public function refresh()
     {
         $this->tokenService->refreshToken();

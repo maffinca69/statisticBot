@@ -14,7 +14,6 @@ class RefreshTokenJob extends Job  implements ShouldQueue
 {
     use SerializesModels;
 
-    private ApiClient $client;
     private TokenService $service;
 
     public function __construct(TokenService $service)

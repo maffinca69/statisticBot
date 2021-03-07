@@ -15,6 +15,7 @@ use Longman\TelegramBot\Request;
 class BotService
 {
     private const OWNER_ID = 239095324;
+    public const OWNER_CHAT_ID = 239095324;
 
     private ApiClient $client;
 

@@ -1,6 +1,8 @@
 <?php
 namespace App\Modules\Google;
 
+use App\Parsers\GoogleSpreadSheetParser;
+use App\Parsers\ParserInterface;
 use App\Services\TokenService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -10,8 +12,15 @@ class ApiClient
     private const API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/';
     private const API_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
+    /**
+     * User spreadsheetID. Unique
+     */
     private const SPREADSHEET_ID = '14IN8w3WYjEMAK6jsNa7b8vkWWk-8r72CPuB_XT4rn_s';
 
+    /**
+     * @param    null    $sheetName
+     * @return string - name of list spreadsheet
+     */
     public function fetchSpreadSheet($sheetName = null)
     {
         $params = [
@@ -23,51 +32,7 @@ class ApiClient
         $response = $response->json();
         Log::info($response);
 
-        $sheet = current($response['sheets']);
-
-        $title = $sheet['properties']['title'] . PHP_EOL . PHP_EOL;
-
-        $positionStatus = current($sheet['data'])['rowData'][2]['values'][1]['formattedValue'];
-        $position = '🧑‍💻 ' . current($sheet['data'])['rowData'][1]['values'][1]['formattedValue'] . ' (' . $positionStatus . ')' . PHP_EOL;
-
-        $trackedValue = current($sheet['data'])['rowData'][9]['values'][1]['formattedValue'];
-        $trackedType = plural_form((int)$trackedValue, ['час', 'часа', 'часов']);
-        $tracked = '⏱ ' . $trackedValue . ' ' . $trackedType . PHP_EOL;
-
-        $salary = '💸 ' . current($sheet['data'])['rowData'][3]['values'][8]['formattedValue'] . PHP_EOL;
-
-        $text = $title . $position . $tracked . $salary;
-
-        // Statistic
-        $text .= PHP_EOL;
-
-        // План/оценка
-        $planEstimate = current($sheet['data'])['rowData'][40]['values'];
-        $planEstimateText = $planEstimate[0]['formattedValue'];
-        $planEstimateValue = $planEstimate[1]['formattedValue'];
-        $planEstimate = str_replace('- ', '', $planEstimateText) . ': ' . $planEstimateValue . PHP_EOL;
-
-        // Оценка/трудозатраты
-        $estimateTimeEntries = current($sheet['data'])['rowData'][41]['values'];
-        $estimateTimeEntriesText = $estimateTimeEntries[0]['formattedValue'];
-        $estimateTimeEntriesValue = $estimateTimeEntries[1]['formattedValue'];
-        $estimateTimeEntries = str_replace('- ', '', $estimateTimeEntriesText) . ': ' . $estimateTimeEntriesValue . PHP_EOL;
-
-        // План/трудозатраты
-        $planTimeEntries = current($sheet['data'])['rowData'][42]['values'];
-        $planTimeEntriesText = $planTimeEntries[0]['formattedValue'];
-        $planTimeEntriesValue = $planTimeEntries[1]['formattedValue'];
-        $planTimeEntries = str_replace('- ', '', $planTimeEntriesText) . ': ' . $planTimeEntriesValue . PHP_EOL;
-
-        // Процент выработки
-        $percent = current($sheet['data'])['rowData'][43]['values'];
-        $percentText = $percent[0]['formattedValue'];
-        $percentValue = $percent[1]['formattedValue'];
-        $percent = str_replace('- ', '', $percentText) . ': ' . $percentValue . PHP_EOL;
-
-        $text .= $planEstimate . $estimateTimeEntries . $planTimeEntries . $percent;
-
-        return $text;
+        return $this->parseResponse(new GoogleSpreadSheetParser(), $response);
     }
 
     public function fetchRefreshToken()
@@ -85,5 +50,17 @@ class ApiClient
         ]);
 
         (new TokenService($this))->saveToken($response->json());
+    }
+
+    /**
+     * Return formatted value
+     *
+     * @param    ParserInterface    $parser
+     * @param    array    $data
+     * @return string
+     */
+    private function parseResponse(ParserInterface $parser, array $data)
+    {
+        return $parser->parse($data);
     }
 }

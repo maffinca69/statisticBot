@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\DailyStatisticCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        DailyStatisticCommand::class
     ];
 
     /**
@@ -24,6 +25,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+        $schedule->command('statistic:send')
+            ->timezone(env('APP_TIMEZONE'))
+//            ->weekends() // игнорируем выходные. Пока отключено для тестирования
+            ->twiceDaily(11, 19); // каждый день в 11:00 и 19:00
     }
 }
