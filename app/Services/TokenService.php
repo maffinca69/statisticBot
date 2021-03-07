@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use App\Helpers\CacheHelper;
 use App\Jobs\RefreshTokenJob;
 use App\Modules\Google\ApiClient;
 use Illuminate\Support\Facades\Cache;
@@ -23,14 +24,16 @@ class TokenService
      * Save access token after refreshing
      *
      * @param    array    $data
+     * @param    int    $userId - user which was authenticated
      * @return bool
      */
-    public function saveToken(array $data)
+    public function saveToken(array $data, int $userId)
     {
-        $savedAccess = Cache::put(self::CACHE_ACCESS_TOKEN_KEY, $data['access_token']);
+        $savedAccess = Cache::put(CacheHelper::CACHE_ACCESS_TOKEN_KEY  . $userId, $data['access_token']);
+        $savedRefresh = Cache::put(CacheHelper::CACHE_REFRESH_TOKEN_KEY . $userId, $data['refresh_token']);
 
-        if ($savedAccess) {
-            $this->scheduleRefreshToken($data['expires_in']);
+        if ($savedAccess && $savedRefresh) {
+            $this->scheduleRefreshToken($data['expires_in'], $userId);
             return true;
         }
 
@@ -39,29 +42,21 @@ class TokenService
 
     /**
      * Fetch refresh token
+     * @param $userId
      */
-    public function refreshToken()
+    public function refreshToken($userId)
     {
-        $this->client->fetchRefreshToken();
+        $this->client->fetchRefreshToken($userId);
     }
 
     /**
      * Adding to queue
      *
      * @param    int    $expire
+     * @param $userId
      */
-    public function scheduleRefreshToken(int $expire)
+    public function scheduleRefreshToken(int $expire, $userId)
     {
-        dispatch((new RefreshTokenJob($this))->delay($expire));
-    }
-
-    /**
-     * Get access token for request
-     *
-     * @return mixed
-     */
-    public static function getAccessToken()
-    {
-        return Cache::get(self::CACHE_ACCESS_TOKEN_KEY, '');
+        dispatch((new RefreshTokenJob($this, $userId))->delay($expire));
     }
 }

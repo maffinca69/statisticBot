@@ -1,9 +1,9 @@
 <?php
 namespace App\Services;
 
+use App\Helpers\CacheHelper;
 use App\Modules\Google\ApiClient;
 use Carbon\Carbon;
-use Carbon\CarbonInterval;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Log;
 use Longman\TelegramBot\ChatAction;
@@ -14,48 +14,72 @@ use Longman\TelegramBot\Request;
 
 class BotService
 {
-    private const OWNER_ID = 239095324;
     public const OWNER_CHAT_ID = 239095324;
 
     private ApiClient $client;
+    private OAuthService $authService;
 
-    public function __construct(ApiClient $client)
+    public function __construct(ApiClient $client, OAuthService $authService)
     {
         $this->client = $client;
+        $this->authService = $authService;
     }
 
     public function execute(Update $update): ServerResponse
     {
         $currentUpdate = $update->getCallbackQuery() ?? $update;
         $chatId =  $currentUpdate->getMessage()->getChat()->getId();
-
-        // Restrict
-        if (!$update->getCallbackQuery() && $update->getMessage()->getFrom()->getId() !== self::OWNER_ID) {
-            return Request::sendMessage([
-                'chat_id' => $chatId,
-                'text' => '👺',
-            ]);
-        }
+        $userId = $update->getCallbackQuery() ?
+            $update->getCallbackQuery()->getFrom()->getId() :
+            $update->getMessage()->getFrom()->getId();
 
         Request::sendChatAction([
             'chat_id' => $chatId,
             'action' => ChatAction::TYPING
         ]);
 
+        // Auth
+        if (!CacheHelper::getAccessTokenByUserId($userId)) {
+            return $this->authService->auth($userId);
+        }
+
+        // Save url
+        if (!CacheHelper::getSpreadSheetIdByUserId($userId)) {
+            Log::info('spreadsheet');
+            $text = $update->getMessage()->getText();
+            preg_match('/spreadsheets\/d\/([a-zA-Z0-9-_]+)/', $text, $textMatched);
+            if (count($textMatched) < 2) {
+                return Request::sendMessage([
+                    'chat_id' => $chatId,
+                    'text' => 'Неверная ссылка на расчетку'
+                ]);
+            }
+
+            $this->authService->saveSpreadSheetId($userId, $textMatched[1]);
+            return Request::sendMessage([
+                'chat_id' => $chatId,
+                'text' => '🎉 Синхронизация выполнена' . PHP_EOL . 'Отправьте /start, чтобы получить статистику'
+            ]);
+        }
+
+        // Base functions
         if (!$update->getCallbackQuery() && $update->getMessage()->getCommand() === 'select') {
             return $this->sendSelectKeyboard($currentUpdate);
         }
 
         $callback = $update->getCallbackQuery() ? $update->getCallbackQuery()->getData() : null;
 
-        if ($text = $this->client->fetchSpreadSheet($callback)) {
+        if ($text = $this->client->fetchSpreadSheet($userId, $callback)) {
             return Request::sendMessage([
                 'chat_id' => $chatId,
                 'text' => $text,
             ]);
         }
 
-        return Request::emptyResponse();
+        return Request::sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Произошла ошибка при обработке расчетки',
+        ]);
     }
 
     public function sendSelectKeyboard(Update $update)

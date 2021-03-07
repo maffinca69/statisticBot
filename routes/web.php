@@ -16,4 +16,4 @@
 $router->get('/', 'WebhookController@setWebhook');
 
 $router->post('/telegram-webhook', 'WebhookController@handle');
-$router->get('/adb5d6f862b9d8af48ffff052b0cfdfda00e9a08bd7d6b76c1f4833c4f0f2494/refresh', 'WebhookController@refresh');
+$router->get('/oauth2callback', 'OauthController@callback');

@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use App\Modules\Google\ApiClient;
 use App\Services\BotService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
@@ -56,19 +57,46 @@ class DailyStatisticCommand extends Command
      */
     public function handle(ApiClient $client)
     {
-        if ($text = $client->fetchSpreadSheet()) {
-            $send = Request::sendMessage(
-                [
-                    'chat_id' => BotService::OWNER_CHAT_ID,
-                    'text' => $text,
-                ]
-            );
+        $ids = $this->getUsersIds();
 
-            $this->info('Statistic was send!');
-
-            return (bool) $send;
+        if (empty($ids)) {
+            return true;
         }
 
-        return false;
+        foreach ($ids as $id) {
+            if ($text = $client->fetchSpreadSheet($id)) {
+                Request::sendMessage([
+                    'chat_id' => $id,
+                    'text' => $text,
+                ]);
+
+                $this->info('Statistic was send! ' . $id);
+            }
+        }
+
+        return true;
+
+    }
+
+    /**
+     * Return users ids, which need send statistics
+     *
+     * @return array
+     */
+    private function getUsersIds(): array
+    {
+        $redis = Cache::getRedis();
+        $keys = $redis->keys("*spreadsheet_id*");
+        $ids = [];
+        foreach ($keys as $key) {
+            preg_match('/spreadsheet_id_([a-zA-Z0-9-_]+)/', $key, $data);
+            if (count($data) < 2) {
+                continue;
+            }
+
+            array_push($ids, (int)$data[1]);
+        }
+
+        return $ids;
     }
 }

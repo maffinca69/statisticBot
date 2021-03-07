@@ -6,9 +6,9 @@ namespace App\Http\Controllers;
 
 use App\Services\BotService;
 use App\Services\TokenService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request as TelegramRequest;
 
@@ -42,23 +42,8 @@ class WebhookController extends Controller
 
     public function setWebhook(Request $request)
     {
+
         $this->telegram->setWebhook(env('TELEGRAM_WEBHOOK_URL'));
         return TelegramRequest::emptyResponse();
-    }
-
-    /**
-     * Update access_token (refresh token)
-     *
-     * @return JsonResponse|ServerResponse
-     */
-    public function refresh()
-    {
-        $this->tokenService->refreshToken();
-
-        if (Cache::has(TokenService::CACHE_ACCESS_TOKEN_KEY)) {
-            return TelegramRequest::emptyResponse();
-        }
-
-        return response()->json(['status' => false]);
     }
 }

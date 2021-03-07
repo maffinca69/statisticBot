@@ -1,6 +1,7 @@
 <?php
 namespace App\Modules\Google;
 
+use App\Helpers\CacheHelper;
 use App\Parsers\GoogleSpreadSheetParser;
 use App\Parsers\ParserInterface;
 use App\Services\TokenService;
@@ -14,31 +15,32 @@ class ApiClient
     /**
      * User spreadsheetID. Unique
      */
-    private const SPREADSHEET_ID = '14IN8w3WYjEMAK6jsNa7b8vkWWk-8r72CPuB_XT4rn_s';
 
     /**
+     * @param    int    $userid
      * @param    null    $sheetName
      * @return string - name of list spreadsheet
      */
-    public function fetchSpreadSheet($sheetName = null)
+    public function fetchSpreadSheet(int $userid, $sheetName = null)
     {
         $params = [
             'includeGridData' => true,
             'ranges' => $sheetName ? "$sheetName!A1:I45" : 'A1:I45',
         ];
 
-        $response = Http::withToken(TokenService::getAccessToken())->get(self::API_URL . self::SPREADSHEET_ID . '?' . http_build_query($params));
+        $response = Http::withToken(CacheHelper::getAccessTokenByUserId($userid))
+            ->get(self::API_URL . CacheHelper::getSpreadSheetIdByUserId($userid) . '?' . http_build_query($params));
         $response = $response->json();
 
         return $this->parseResponse(new GoogleSpreadSheetParser(), $response);
     }
 
-    public function fetchRefreshToken()
+    public function fetchRefreshToken($userId)
     {
         $clientId = config('google.client_id');
         $clientSecret = config('google.client_secret');
         $grandType = 'refresh_token';
-        $refreshToken = config('google.refresh_token');
+        $refreshToken = CacheHelper::getRefreshTokenByUserId($userId);
 
         $response = Http::post(self::API_TOKEN_URL, [
             'client_id' => $clientId,
@@ -47,7 +49,7 @@ class ApiClient
             'refresh_token' => $refreshToken,
         ]);
 
-        (new TokenService($this))->saveToken($response->json());
+        (new TokenService($this))->saveToken($response->json(), $userId);
     }
 
     /**

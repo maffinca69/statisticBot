@@ -15,10 +15,12 @@ class RefreshTokenJob extends Job  implements ShouldQueue
     use SerializesModels;
 
     private TokenService $service;
+    private int $userId;
 
-    public function __construct(TokenService $service)
+    public function __construct(TokenService $service, int $userId)
     {
         $this->service = $service;
+        $this->userId = $userId;
     }
 
     /**
@@ -28,6 +30,6 @@ class RefreshTokenJob extends Job  implements ShouldQueue
      */
     public function handle()
     {
-        $this->service->refreshToken();
+        $this->service->refreshToken($this->userId);
     }
 }
