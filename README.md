@@ -6,12 +6,14 @@
 - Laravel queue (with redis)
 - Laravel schedules (send statistics every day)
 - Cron (send statistics with helped laravel schedules)
+- Docker (local workspace)
 
 #### Install
 1. Git clone
 2. ```cp .env.example .env```
 2. ```cd docker```
 2. ```cp .env.example .env```
+2. Setting bot token and google api keys
 2. ```docker-compose up -d```
 2. ```docker exec -it statistic_fpm_1 /bin/sh```
 2. ```composer install```
