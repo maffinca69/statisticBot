@@ -16,10 +16,8 @@ class Controller extends BaseController
     /** @var Telegram */
     protected Telegram $telegram;
 
-    /**
-     * @param Request $request
-     */
-    protected function handle(Request $request) {
+    public function __construct(Request $request)
+    {
         $this->init($request->all());
     }
 

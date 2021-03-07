@@ -5,7 +5,6 @@ use App\Parsers\GoogleSpreadSheetParser;
 use App\Parsers\ParserInterface;
 use App\Services\TokenService;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class ApiClient
 {
@@ -30,7 +29,6 @@ class ApiClient
 
         $response = Http::withToken(TokenService::getAccessToken())->get(self::API_URL . self::SPREADSHEET_ID . '?' . http_build_query($params));
         $response = $response->json();
-        Log::info($response);
 
         return $this->parseResponse(new GoogleSpreadSheetParser(), $response);
     }

@@ -13,9 +13,7 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
+$router->get('/', 'WebhookController@setWebhook');
 
 $router->post('/telegram-webhook', 'WebhookController@handle');
 $router->get('/telegram-webhook', 'WebhookController@handle');
