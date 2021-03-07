@@ -4,13 +4,11 @@
 namespace App\Console\Commands;
 
 
+use App\Helpers\CacheHelper;
 use App\Jobs\RefreshTokenJob;
-use App\Modules\Google\ApiClient;
 use App\Services\TokenService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 use Longman\TelegramBot\Exception\TelegramException;
-use Longman\TelegramBot\Request;
 
 class RefreshToken extends Command
 {
@@ -47,7 +45,7 @@ class RefreshToken extends Command
      */
     public function handle(TokenService $service)
     {
-        $ids = $this->getUsersIds();
+        $ids = CacheHelper::getAllIdsUsersFromCache();
 
         if (empty($ids)) {
             return true;
@@ -61,22 +59,4 @@ class RefreshToken extends Command
         return true;
 
     }
-
-    private function getUsersIds(): array
-    {
-        $redis = Cache::getRedis();
-        $keys = $redis->keys("*spreadsheet_id*");
-        $ids = [];
-        foreach ($keys as $key) {
-            preg_match('/spreadsheet_id_([a-zA-Z0-9-_]+)/', $key, $data);
-            if (count($data) < 2) {
-                continue;
-            }
-
-            array_push($ids, (int)$data[1]);
-        }
-
-        return $ids;
-    }
-
 }

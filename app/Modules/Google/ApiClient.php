@@ -5,6 +5,8 @@ use App\Helpers\CacheHelper;
 use App\Parsers\GoogleSpreadSheetParser;
 use App\Parsers\ParserInterface;
 use App\Services\TokenService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -28,6 +30,10 @@ class ApiClient
         $response = Http::withToken(CacheHelper::getAccessTokenByUserId($userid))
             ->get(self::API_URL . CacheHelper::getSpreadSheetIdByUserId($userid) . '?' . http_build_query($params));
         $response = $response->json();
+
+        if (isset($response['code']) && $response['code'] === Response::HTTP_UNAUTHORIZED) {
+            return '🛠 Token is expired';
+        }
 
         return $this->parseResponse(new GoogleSpreadSheetParser(), $response);
     }

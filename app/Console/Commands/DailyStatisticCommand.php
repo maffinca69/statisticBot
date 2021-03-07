@@ -4,6 +4,7 @@
 namespace App\Console\Commands;
 
 
+use App\Helpers\CacheHelper;
 use App\Modules\Google\ApiClient;
 use App\Services\BotService;
 use Illuminate\Console\Command;
@@ -57,7 +58,7 @@ class DailyStatisticCommand extends Command
      */
     public function handle(ApiClient $client)
     {
-        $ids = $this->getUsersIds();
+        $ids = CacheHelper::getAllIdsUsersFromCache();
 
         if (empty($ids)) {
             return true;
@@ -76,27 +77,5 @@ class DailyStatisticCommand extends Command
 
         return true;
 
-    }
-
-    /**
-     * Return users ids, which need send statistics
-     *
-     * @return array
-     */
-    private function getUsersIds(): array
-    {
-        $redis = Cache::getRedis();
-        $keys = $redis->keys("*spreadsheet_id*");
-        $ids = [];
-        foreach ($keys as $key) {
-            preg_match('/spreadsheet_id_([a-zA-Z0-9-_]+)/', $key, $data);
-            if (count($data) < 2) {
-                continue;
-            }
-
-            array_push($ids, (int)$data[1]);
-        }
-
-        return $ids;
     }
 }

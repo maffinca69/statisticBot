@@ -50,4 +50,24 @@ class CacheHelper
 
         return Cache::get(self::CACHE_SPREADSHEET_ID_KEY . $userId, '');
     }
+
+    /**
+     * Get all ids user which logged
+     */
+    public static function getAllIdsUsersFromCache(): array
+    {
+        $redis = Cache::getRedis();
+        $keys = $redis->keys("*spreadsheet_id*");
+        $ids = [];
+        foreach ($keys as $key) {
+            preg_match('/spreadsheet_id_([a-zA-Z0-9-_]+)/', $key, $data);
+            if (count($data) < 2) {
+                continue;
+            }
+
+            array_push($ids, (int)$data[1]);
+        }
+
+        return $ids;
+    }
 }
