@@ -8,6 +8,10 @@ use App\Helpers\CacheHelper;
 use Google_Client;
 use Google_Service_Sheets;
 use Illuminate\Support\Facades\Cache;
+use Longman\TelegramBot\Entities\InlineKeyboard;
+use Longman\TelegramBot\Entities\InlineKeyboardButton;
+use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 
@@ -36,7 +40,10 @@ class OAuthService
 
         return Request::sendMessage([
             'chat_id' => $userId,
-            'text' => 'Необходимо авторизоваться по ссылке ниже:' . PHP_EOL .  filter_var($auth_url, FILTER_SANITIZE_URL)
+            'reply_markup' => new InlineKeyboard([
+                new InlineKeyboardButton(['text' => 'Авторизоваться', 'url' => filter_var($auth_url, FILTER_SANITIZE_URL)])
+           ]),
+            'text' => '🔒 Необходимо авторизоваться'
         ]);
     }
 
@@ -50,6 +57,7 @@ class OAuthService
             // maybe refactoring...
             Request::sendMessage([
                 'chat_id' => $userId,
+                'reply_markup' => Keyboard::remove(),
                 'text' => '🎉 Успешно авторизованы!' . PHP_EOL . 'Теперь отправьте ссылку на свою расчетку'
             ]);
 
