@@ -31,7 +31,7 @@ class ApiClient
             ->get(self::API_URL . CacheHelper::getSpreadSheetIdByUserId($userid) . '?' . http_build_query($params));
         $response = $response->json();
 
-        if (isset($response['code']) && $response['code'] === Response::HTTP_UNAUTHORIZED) {
+        if (isset($response['error']) && $response['error']['code'] === Response::HTTP_UNAUTHORIZED) {
             return '🛠 Token is expired';
         }
 
