@@ -2,12 +2,13 @@
 
 #### Used technologies and services:
 - Lumen (core bot)
-- Redis (refresh google account token, cache, queue)
+- Redis (refresh google account token, cache)
 - Laravel queue (with redis)
 - Laravel schedules (send statistics every day)
 - Cron (send statistics with helped laravel schedules)
 - Docker (local workspace)
 - Google OAuth 2.0 (login google account)
+- Supervisor (queue)
 
 #### Install
 1. Git clone
