@@ -7,6 +7,7 @@
 - Laravel schedules (send statistics every day)
 - Cron (send statistics with helped laravel schedules)
 - Docker (local workspace)
+- Google OAuth 2.0 (login google account)
 
 #### Install
 1. Git clone
@@ -19,12 +20,18 @@
 2. ```composer install```
 
 #### Refresh token automatically
-Run after expired token:
+Run after authorized:
 
-```php artisan queue:work```
+```
+php artisan queue:work
+```
+#### Refresh token manually
 
-Also, app has secret url for refresh token (_routes/web.php_)
+```
+php artisan token:refresh
+php artisan queue:work
+```
 
-## Planned...
+
+## Planned
 1. Test, test, test...
-2. Simplify google authorization (by url which sent bot) 
