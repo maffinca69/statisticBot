@@ -31,8 +31,6 @@ services:
   redis:
     image: redis:alpine
     command: redis-server
-    volumes:
-      - ./data/redis:/data
     ports:
       - "8002:6379"
 
