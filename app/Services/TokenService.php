@@ -61,5 +61,7 @@ class TokenService
     public function scheduleRefreshToken(int $expire, $userId)
     {
         dispatch((new RefreshTokenJob($this, $userId))->delay($expire));
+        Log::info('Token was refreshing ' . $userId . ' - ' .
+                  Carbon::now()->addSeconds($expire)->format('d.m.y H:m:s'));
     }
 }
