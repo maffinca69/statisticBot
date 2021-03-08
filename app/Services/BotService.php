@@ -5,7 +5,6 @@ use App\Helpers\CacheHelper;
 use App\Modules\Google\ApiClient;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Illuminate\Support\Facades\Log;
 use Longman\TelegramBot\ChatAction;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\ServerResponse;
@@ -83,7 +82,6 @@ class BotService
     {
         $chatId =  $update->getMessage()->getChat()->getId();
         $rows = [];
-        $rows2 = [];
         $period = CarbonPeriod::create(Carbon::now()->subMonths(3), Carbon::now());
 
         $lastMonth = '';
@@ -91,18 +89,15 @@ class BotService
             if ($date->monthName === $lastMonth) {
                 continue;
             }
-            $data = mb_convert_case(sprintf('%s %s', $date->monthName, $date->year), MB_CASE_TITLE);
 
-            if ($index % 2 === 0 && $index !== 0) {
-                array_push($rows, ['text' => $data, 'callback_data' => $data]);
-            } else {
-                array_push($rows2, ['text' => $data, 'callback_data' => $data]);
-            }
+            $data = mb_convert_case(sprintf('%s %s', $date->monthName, $date->year), MB_CASE_TITLE);
+            array_push($rows, ['text' => $data, 'callback_data' => $data]);
 
             $lastMonth = $date->monthName;
         }
 
-        $inline_keyboard = new InlineKeyboard(array_reverse($rows), array_reverse($rows2));
+        $rows = array_chunk(array_reverse($rows), 2);
+        $inline_keyboard = new InlineKeyboard($rows[0], $rows[1]);
 
         return Request::sendMessage([
                 'chat_id' => $chatId,
