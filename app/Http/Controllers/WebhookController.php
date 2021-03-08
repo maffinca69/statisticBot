@@ -7,9 +7,8 @@ namespace App\Http\Controllers;
 use App\Services\BotService;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Redis;
 use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request as TelegramRequest;
 
 class WebhookController extends Controller
@@ -40,9 +39,16 @@ class WebhookController extends Controller
         return TelegramRequest::emptyResponse();
     }
 
+    /**
+     * Set current telegram webhook
+     * For setting local/prod workspace
+     *
+     * @param    Request    $request
+     * @return ServerResponse
+     * @throws TelegramException
+     */
     public function setWebhook(Request $request)
     {
-
         $this->telegram->setWebhook(env('TELEGRAM_WEBHOOK_URL'));
         return TelegramRequest::emptyResponse();
     }

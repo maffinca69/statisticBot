@@ -13,6 +13,8 @@ class CacheHelper
     public const CACHE_SPREADSHEET_ID_KEY = 'spreadsheet_id_';
 
     /**
+     * Get access token by user id
+     *
      * @param    int    $userId
      * @return false|mixed
      */
@@ -26,6 +28,8 @@ class CacheHelper
     }
 
     /**
+     * Get refresh token by userID
+     *
      * @param    int    $userId
      * @return false|mixed
      */
@@ -39,6 +43,8 @@ class CacheHelper
     }
 
     /**
+     * Get spreadsheetID by userID
+     *
      * @param    int    $userId
      * @return false|mixed
      */

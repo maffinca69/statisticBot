@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Longman\TelegramBot\Entities\Update;
+use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Telegram;
 
 class Controller extends BaseController
@@ -21,6 +22,10 @@ class Controller extends BaseController
         $this->init($request->all());
     }
 
+    /**
+     * @param    array    $data
+     * @throws TelegramException
+     */
     private function init(array $data)
     {
         $username = config('bot.username');

@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Helpers\CacheHelper;
+use Google\Exception;
 use Google_Client;
 use Google_Service_Sheets;
 use Illuminate\Support\Facades\Cache;
@@ -22,14 +23,23 @@ class OAuthService
     public function __construct(Google_Client $googleClient, TokenService $tokenService)
     {
         $this->googleClient = $googleClient;
+        $this->initGoogleAuthClient();
+
+        $this->tokenService = $tokenService;
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    private function initGoogleAuthClient(): void
+    {
         $this->googleClient->setAuthConfig(storage_path('app/client_secret.json'));
         $this->googleClient->addScope(Google_Service_Sheets::SPREADSHEETS);
         $this->googleClient->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback');
         $this->googleClient->setAccessType('offline');
         $this->googleClient->setPrompt('consent');
         $this->googleClient->setIncludeGrantedScopes(true);   // incremental auth
-
-        $this->tokenService = $tokenService;
     }
 
     public function auth(int $userId): ServerResponse
@@ -66,6 +76,13 @@ class OAuthService
         return true;
     }
 
+    /**
+     * Save user spreadsheetID
+     *
+     * @param    int    $userId
+     * @param    string    $spreadsheetId
+     * @return bool
+     */
     public function saveSpreadSheetId(int $userId, string $spreadsheetId)
     {
         return Cache::put(CacheHelper::CACHE_SPREADSHEET_ID_KEY . $userId, $spreadsheetId);

@@ -9,6 +9,7 @@ use Longman\TelegramBot\ChatAction;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
+use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 
 class BotService
@@ -22,6 +23,13 @@ class BotService
         $this->authService = $authService;
     }
 
+    /**
+     * General bot logic function
+     *
+     * @param    Update    $update
+     * @return ServerResponse
+     * @throws TelegramException
+     */
     public function execute(Update $update): ServerResponse
     {
         $currentUpdate = $update->getCallbackQuery() ?? $update;

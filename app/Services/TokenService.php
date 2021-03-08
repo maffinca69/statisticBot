@@ -44,6 +44,7 @@ class TokenService
 
     /**
      * Fetch refresh token
+     *
      * @param $userId
      */
     public function refreshToken($userId)
@@ -54,7 +55,7 @@ class TokenService
     /**
      * Adding to queue
      *
-     * @param    int    $expire
+     * @param    int    $expire - seconds
      * @param $userId
      */
     public function scheduleRefreshToken(int $expire, $userId)

@@ -6,13 +6,17 @@ namespace App\Console\Commands;
 
 use App\Helpers\CacheHelper;
 use App\Modules\Google\ApiClient;
-use App\Services\BotService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
 
+/**
+ * Manually send statistic
+ *
+ * Class DailyStatisticCommand
+ * @package App\Console\Commands
+ */
 class DailyStatisticCommand extends Command
 {
     /**
@@ -76,6 +80,5 @@ class DailyStatisticCommand extends Command
         }
 
         return true;
-
     }
 }

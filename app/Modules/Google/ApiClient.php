@@ -5,10 +5,8 @@ use App\Helpers\CacheHelper;
 use App\Parsers\GoogleSpreadSheetParser;
 use App\Parsers\ParserInterface;
 use App\Services\TokenService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class ApiClient
 {
@@ -38,6 +36,11 @@ class ApiClient
         return $this->parseResponse(new GoogleSpreadSheetParser(), $response);
     }
 
+    /**
+     * Fetch refresh token vy userID
+     *
+     * @param $userId
+     */
     public function fetchRefreshToken($userId)
     {
         $clientId = config('google.client_id');

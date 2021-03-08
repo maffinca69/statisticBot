@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use App\Services\OAuthService;
 use Illuminate\Http\Request;
 
+/**
+ * Controller for Google OAuth 2.0
+ *
+ * Class OauthController
+ * @package App\Http\Controllers
+ */
 class OauthController extends Controller
 {
     private OAuthService $service;
@@ -16,6 +22,12 @@ class OauthController extends Controller
         $this->service = $service;
     }
 
+    /**
+     * Callback function after logged
+     *
+     * @param    Request    $request
+     * @return string
+     */
     public function callback(Request $request)
     {
         $authenticated = $this->service->authByCode($request->all());
