@@ -40,7 +40,6 @@ class RefreshTokenJob extends Job  implements ShouldQueue
      */
     public function failed(Exception $exception)
     {
-        Log::info($exception->getMessage());
-        // Send user notification of failure, etc...
+        Log::error($exception->getTrace());
     }
 }

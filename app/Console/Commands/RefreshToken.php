@@ -53,7 +53,7 @@ class RefreshToken extends Command
 
         foreach ($ids as $id) {
             dispatch(new RefreshTokenJob($service, $id));
-            $this->info('Token has been refreshed!' . $id);
+            $this->info('Token has been refreshed! ID - ' . $id);
         }
 
         return true;

@@ -43,7 +43,6 @@ class BotService
 
         // Save url
         if (!CacheHelper::getSpreadSheetIdByUserId($userId)) {
-            Log::info('spreadsheet');
             $text = $update->getMessage()->getText();
             preg_match('/spreadsheets\/d\/([a-zA-Z0-9-_]+)/', $text, $textMatched);
             if (count($textMatched) < 2) {

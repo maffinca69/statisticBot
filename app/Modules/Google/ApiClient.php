@@ -52,8 +52,6 @@ class ApiClient
             'refresh_token' => $refreshToken,
         ]);
 
-        Log::info($response->json());
-
         (new TokenService($this))->saveToken($response->json(), $userId);
     }
 
