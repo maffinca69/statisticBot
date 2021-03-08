@@ -57,6 +57,5 @@ class RefreshToken extends Command
         }
 
         return true;
-
     }
 }

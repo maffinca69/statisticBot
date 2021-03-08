@@ -3,12 +3,11 @@
 
 namespace App\Jobs;
 
-
-use App\Modules\Google\ApiClient;
+use Exception;
 use App\Services\TokenService;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class RefreshTokenJob extends Job  implements ShouldQueue
 {
@@ -31,5 +30,17 @@ class RefreshTokenJob extends Job  implements ShouldQueue
     public function handle()
     {
         $this->service->refreshToken($this->userId);
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        Log::info($exception->getMessage());
+        // Send user notification of failure, etc...
     }
 }
