@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Cache;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 
@@ -42,7 +41,7 @@ class OAuthService
             'chat_id' => $userId,
             'reply_markup' => new InlineKeyboard([
                 new InlineKeyboardButton(['text' => 'Авторизоваться', 'url' => filter_var($auth_url, FILTER_SANITIZE_URL)])
-           ]),
+            ]),
             'text' => '🔒 Необходимо авторизоваться'
         ]);
     }
