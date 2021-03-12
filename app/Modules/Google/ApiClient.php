@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 class ApiClient
 {
     private const API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/';
+    private const SPREADSHEET_BASE_URL = 'https://docs.google.com/spreadsheets/d/%s/edit#gid=%s';
     private const API_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
     /**
@@ -33,7 +34,39 @@ class ApiClient
             return '🛠 Token is expired';
         }
 
-        return $this->parseResponse(new GoogleSpreadSheetParser(), $response);
+        $text = self::parseResponse(new GoogleSpreadSheetParser(), $response);
+
+        if (!empty($text)) {
+            $link = self::buildStatisticUrl($response);
+            $linkText = 'Ссылка на расчетку';
+            $text .= PHP_EOL . PHP_EOL . self::buildHyperlink($link, $linkText);
+        }
+
+        return $text;
+    }
+
+    /**
+     * Build current spreadsheet link
+     *
+     * @param    array    $data - google spreadsheet response
+     * @return string
+     */
+    private static function buildStatisticUrl(array $data): string
+    {
+        $sheetId = current($data['sheets'])['properties']['sheetId'];
+        $spreadsheetId = $data['spreadsheetId'];
+
+        return sprintf(self::SPREADSHEET_BASE_URL,$spreadsheetId, $sheetId);
+    }
+
+    /**
+     * @param    string    $link
+     * @param    string    $text
+     * @return string
+     */
+    private static function buildHyperlink(string $link, string $text): string
+    {
+        return sprintf('[%s](%s)', $text, $link);
     }
 
     /**
@@ -65,7 +98,7 @@ class ApiClient
      * @param    array    $data
      * @return string
      */
-    private function parseResponse(ParserInterface $parser, array $data)
+    private static function parseResponse(ParserInterface $parser, array $data)
     {
         return $parser->parse($data);
     }

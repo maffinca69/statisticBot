@@ -57,6 +57,6 @@ class GoogleSpreadSheetParser implements ParserInterface
 
         $text .= $planEstimate . $estimateTimeEntries . $planTimeEntries . $percent;
 
-        return $text;
+        return trim($text);
     }
 }

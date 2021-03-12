@@ -77,6 +77,7 @@ class BotService
             return Request::sendMessage([
                 'chat_id' => $chatId,
                 'text' => $text,
+                'parse_mode' => 'markdown'
             ]);
         }
 
