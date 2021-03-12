@@ -109,9 +109,9 @@ class BotService
         $inline_keyboard = new InlineKeyboard($rows[0], $rows[1]);
 
         return Request::sendMessage([
-                'chat_id' => $chatId,
-                'text' => 'Выберите месяц со статистикой',
-                'reply_markup' => $inline_keyboard
+            'chat_id' => $chatId,
+            'text' => 'Выберите месяц со статистикой',
+            'reply_markup' => $inline_keyboard
         ]);
     }
 }
