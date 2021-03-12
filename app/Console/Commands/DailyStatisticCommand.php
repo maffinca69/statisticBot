@@ -73,6 +73,7 @@ class DailyStatisticCommand extends Command
                 Request::sendMessage([
                     'chat_id' => $id,
                     'text' => $text,
+                    'parse_mode' => 'markdown'
                 ]);
 
                 $this->info('Statistic was send! ' . $id);
