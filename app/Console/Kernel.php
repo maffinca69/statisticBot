@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('statistic:send')
             ->timezone(env('APP_TIMEZONE'))
-//            ->weekends() // игнорируем выходные. Пока отключено для тестирования
+            ->weekends() // игнорируем выходные. Пока отключено для тестирования
             ->twiceDaily(11, 19); // каждый день в 11:00 и 19:00
     }
 }
