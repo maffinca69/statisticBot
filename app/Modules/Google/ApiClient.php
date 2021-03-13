@@ -14,6 +14,10 @@ class ApiClient
     private const SPREADSHEET_BASE_URL = 'https://docs.google.com/spreadsheets/d/%s/edit#gid=%s';
     private const API_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
+    public const TOKEN_IS_EXPIRED = '🛠 Token is expired';
+
+    public string $statisticUrl = '';
+
     /**
      * @param    int    $userid
      * @param    null    $sheetName
@@ -31,15 +35,13 @@ class ApiClient
         $response = $response->json();
 
         if (isset($response['error']) && $response['error']['code'] === Response::HTTP_UNAUTHORIZED) {
-            return '🛠 Token is expired';
+            return self::TOKEN_IS_EXPIRED;
         }
 
         $text = self::parseResponse(new GoogleSpreadSheetParser(), $response);
 
         if (!empty($text)) {
-            $link = self::buildStatisticUrl($response);
-            $linkText = 'Ссылка на расчетку';
-            $text .= PHP_EOL . PHP_EOL . self::buildHyperlink($link, $linkText);
+            $this->statisticUrl = self::buildStatisticUrl($response);
         }
 
         return $text;
@@ -57,16 +59,6 @@ class ApiClient
         $spreadsheetId = $data['spreadsheetId'];
 
         return sprintf(self::SPREADSHEET_BASE_URL,$spreadsheetId, $sheetId);
-    }
-
-    /**
-     * @param    string    $link
-     * @param    string    $text
-     * @return string
-     */
-    private static function buildHyperlink(string $link, string $text): string
-    {
-        return sprintf('[%s](%s)', $text, $link);
     }
 
     /**

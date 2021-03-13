@@ -4,11 +4,11 @@
 namespace App\Console\Commands;
 
 
+use App\Helpers\BotHelper;
 use App\Helpers\CacheHelper;
 use App\Modules\Google\ApiClient;
 use Illuminate\Console\Command;
 use Longman\TelegramBot\Exception\TelegramException;
-use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
 
 /**
@@ -70,11 +70,7 @@ class DailyStatisticCommand extends Command
 
         foreach ($ids as $id) {
             if ($text = $client->fetchSpreadSheet($id)) {
-                Request::sendMessage([
-                    'chat_id' => $id,
-                    'text' => $text,
-                    'parse_mode' => 'markdown'
-                ]);
+                BotHelper::sendGeneralMessage($id, $text, $client->statisticUrl);
 
                 $this->info('Statistic was send! ' . $id);
             }
