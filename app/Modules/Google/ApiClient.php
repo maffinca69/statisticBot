@@ -2,15 +2,18 @@
 namespace App\Modules\Google;
 
 use App\Helpers\CacheHelper;
+use App\Parsers\GoogleDriveInfoFileParser;
 use App\Parsers\GoogleSpreadSheetParser;
 use App\Parsers\ParserInterface;
 use App\Services\TokenService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ApiClient
 {
     private const API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/';
+    private const DRIVE_API_URL = 'https://www.googleapis.com/drive/v3/files/';
     private const SPREADSHEET_BASE_URL = 'https://docs.google.com/spreadsheets/d/%s/edit#gid=%s';
     private const API_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
@@ -19,32 +22,53 @@ class ApiClient
     public string $statisticUrl = '';
 
     /**
-     * @param    int    $userid
+     * @param    int    $userId
      * @param    null    $sheetName
      * @return string - name of list spreadsheet
      */
-    public function fetchSpreadSheet(int $userid, $sheetName = null)
+    public function fetchSpreadSheet(int $userId, $sheetName = null)
     {
-        $params = [
+        // prepare request
+        $token = CacheHelper::getAccessTokenByUserId($userId);
+        $spreadsheetId = CacheHelper::getSpreadSheetIdByUserId($userId);
+        $response = Http::withToken($token)->get(self::API_URL . $spreadsheetId, [
             'includeGridData' => true,
             'ranges' => $sheetName ? "$sheetName!A1:I45" : 'A1:I45',
-        ];
+        ]);
 
-        $response = Http::withToken(CacheHelper::getAccessTokenByUserId($userid))
-            ->get(self::API_URL . CacheHelper::getSpreadSheetIdByUserId($userid) . '?' . http_build_query($params));
         $response = $response->json();
 
         if (isset($response['error']) && $response['error']['code'] === Response::HTTP_UNAUTHORIZED) {
             return self::TOKEN_IS_EXPIRED;
         }
 
+        Log::info($response);
+
         $text = self::parseResponse(new GoogleSpreadSheetParser(), $response);
 
         if (!empty($text)) {
-            $this->statisticUrl = self::buildStatisticUrl($response);
+            $text .= $this->loadAdditionallyInfo($userId, $response);
         }
 
         return $text;
+    }
+
+    /**
+     * @param    int    $userId
+     * @param    array    $generalResponse
+     * @return string
+     */
+    private function loadAdditionallyInfo(int $userId, array $generalResponse): string
+    {
+        $this->statisticUrl = self::buildStatisticUrl($generalResponse);
+        $info = $this->fetchInfoFile($userId, $generalResponse['spreadsheetId']);
+
+        if (isset($info['error'])) {
+            return '';
+        }
+
+        $parsedInfo = self::parseResponse(new GoogleDriveInfoFileParser(), $info);
+        return PHP_EOL . PHP_EOL . $parsedInfo;
     }
 
     /**
@@ -81,6 +105,21 @@ class ApiClient
         ]);
 
         (new TokenService($this))->saveToken($response->json(), $userId);
+    }
+
+    /**
+     * @param    int    $userId
+     * @param    $fileId
+     * @return array|mixed
+     */
+    public function fetchInfoFile(int $userId, $fileId)
+    {
+        $response = Http::withToken(CacheHelper::getAccessTokenByUserId($userId))
+            ->get(self::DRIVE_API_URL . $fileId, [
+                'fields' => 'modifiedTime'
+            ]);
+
+        return $response->json();
     }
 
     /**
