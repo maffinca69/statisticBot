@@ -28,8 +28,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('statistic:send')
-            ->timezone(env('APP_TIMEZONE'))
-            ->weekends() // игнорируем выходные. Пока отключено для тестирования
+            ->timezone(config('app.timezone'))
+            ->weekends() // игнорируем выходные
             ->twiceDaily(11, 19); // каждый день в 11:00 и 19:00
     }
 }
