@@ -77,6 +77,21 @@ class OAuthService
     }
 
     /**
+     * Logout user
+     *
+     * @param    int    $userId
+     * @return bool
+     */
+    public function logout(int $userId)
+    {
+        $revokeAccess = CacheHelper::revokeAccessToken($userId);
+        $revokeRefresh = CacheHelper::revokeRefreshToken($userId);
+        $revokeSpreadSheet = CacheHelper::revokeSpreadSheetId($userId);
+
+        return $revokeAccess && $revokeRefresh && $revokeSpreadSheet;
+    }
+
+    /**
      * Save user spreadsheetID
      *
      * @param    int    $userId

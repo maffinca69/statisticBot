@@ -69,7 +69,34 @@ class BotService
             return BotHelper::sendSelectKeyboard($chatId);
         }
 
+        // Commands
+        // todo refactoring (one command - one class)
+        if (!$update->getCallbackQuery()) {
+            $command = $update->getMessage()->getCommand();
+            switch ($command) {
+                case 'select':
+                    // Base functions
+                    return BotHelper::sendSelectKeyboard($chatId);
+                case 'logout':
+                    return BotHelper::sendConfirmLogoutMessage($chatId);
+            }
+        }
+
         $callback = $update->getCallbackQuery() ? $update->getCallbackQuery()->getData() : null;
+
+        // Callback
+        // todo refactoring... (maybe rewrite to class)
+        if ($callback) {
+            switch ($callback) {
+                case 'logout':
+                    if ($this->authService->logout($userId)) {
+                        return BotHelper::sendGeneralMessage($chatId, '🚪 Вы успешно вышли из аккаунта');
+                    }
+
+                    return BotHelper::sendGeneralMessage($chatId, '🛠 Произошла ошибка');
+            }
+        }
+
 
         if ($text = $this->client->fetchSpreadSheet($userId, $callback)) {
             return BotHelper::sendGeneralMessage($chatId, $text, $this->client->statisticUrl);

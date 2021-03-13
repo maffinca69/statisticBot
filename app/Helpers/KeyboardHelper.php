@@ -12,6 +12,7 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 class KeyboardHelper
 {
     public const STATISTIC_LINK_TEXT = 'Ссылка на расчетку';
+    public const LOGOUT_CONFIRM_TEXT = 'Подтвердить';
 
     /**
      * @param    string    $url
@@ -50,5 +51,15 @@ class KeyboardHelper
         $rows = array_chunk(array_reverse($rows), 2);
 
         return new InlineKeyboard($rows[0], $rows[1]);
+    }
+
+    public static function inlineLogoutKeyboard(): InlineKeyboard
+    {
+        return new InlineKeyboard([
+            new InlineKeyboardButton([
+                'text' => self::LOGOUT_CONFIRM_TEXT,
+                'callback_data' => 'logout'
+           ])
+        ]);
     }
 }

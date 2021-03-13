@@ -48,4 +48,18 @@ class BotHelper
             'reply_markup' => $keyboard
         ]);
     }
+
+    /**
+     * @param    int    $chatId
+     * @return ServerResponse
+     * @throws TelegramException
+     */
+    public static function sendConfirmLogoutMessage(int $chatId)
+    {
+        return Request::sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Вы действительно хотите выйти из аккаунта?',
+            'reply_markup' => KeyboardHelper::inlineLogoutKeyboard()
+        ]);
+    }
 }

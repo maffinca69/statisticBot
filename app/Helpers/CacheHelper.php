@@ -76,4 +76,31 @@ class CacheHelper
 
         return $ids;
     }
+
+    /**
+     * @param    int    $userId
+     * @return bool
+     */
+    public static function revokeAccessToken(int $userId)
+    {
+        return Cache::forget(CacheHelper::CACHE_ACCESS_TOKEN_KEY . $userId);
+    }
+
+    /**
+     * @param    int    $userId
+     * @return bool
+     */
+    public static function revokeRefreshToken(int $userId)
+    {
+        return Cache::forget(CacheHelper::CACHE_REFRESH_TOKEN_KEY . $userId);
+    }
+
+    /**
+     * @param    int    $userId
+     * @return bool
+     */
+    public static function revokeSpreadSheetId(int $userId)
+    {
+        return Cache::forget(CacheHelper::CACHE_SPREADSHEET_ID_KEY . $userId);
+    }
 }
