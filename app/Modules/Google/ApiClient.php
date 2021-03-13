@@ -8,7 +8,6 @@ use App\Parsers\ParserInterface;
 use App\Services\TokenService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class ApiClient
 {
@@ -42,8 +41,6 @@ class ApiClient
             return self::TOKEN_IS_EXPIRED;
         }
 
-        Log::info($response);
-
         $text = self::parseResponse(new GoogleSpreadSheetParser(), $response);
 
         if (!empty($text)) {
@@ -60,7 +57,7 @@ class ApiClient
      */
     private function loadAdditionallyInfo(int $userId, array $generalResponse): string
     {
-        $this->statisticUrl = self::buildStatisticUrl($generalResponse);
+        $this->statisticUrl = self::statisticUrl($generalResponse);
         $info = $this->fetchInfoFile($userId, $generalResponse['spreadsheetId']);
 
         if (isset($info['error'])) {
@@ -77,7 +74,7 @@ class ApiClient
      * @param    array    $data - google spreadsheet response
      * @return string
      */
-    private static function buildStatisticUrl(array $data): string
+    private static function statisticUrl(array $data): string
     {
         $sheetId = current($data['sheets'])['properties']['sheetId'];
         $spreadsheetId = $data['spreadsheetId'];

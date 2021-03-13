@@ -27,7 +27,7 @@ class BotHelper
         ];
 
         if ($text !== ApiClient::TOKEN_IS_EXPIRED && !empty($statisticUrl)) {
-            $params['reply_markup'] = KeyboardHelper::buildInlineKeyboardLinkButton($statisticUrl);
+            $params['reply_markup'] = KeyboardHelper::inlineKeyboardLinkButton($statisticUrl);
         }
 
         return Request::sendMessage($params);
@@ -40,7 +40,7 @@ class BotHelper
      */
     public static function sendSelectKeyboard(int $chatId)
     {
-        $keyboard = KeyboardHelper::buildSelectMonthInlineKeyboard();
+        $keyboard = KeyboardHelper::inlineKeyboardSelectMonth();
 
         return Request::sendMessage([
             'chat_id' => $chatId,

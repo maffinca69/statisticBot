@@ -18,7 +18,7 @@ class KeyboardHelper
      * @param    string    $url
      * @return InlineKeyboard
      */
-    public static function buildInlineKeyboardLinkButton(string $url): InlineKeyboard
+    public static function inlineKeyboardLinkButton(string $url): InlineKeyboard
     {
         return new InlineKeyboard([
             new InlineKeyboardButton([
@@ -31,7 +31,7 @@ class KeyboardHelper
     /**
      * @return InlineKeyboard
      */
-    public static function buildSelectMonthInlineKeyboard(): InlineKeyboard
+    public static function inlineKeyboardSelectMonth(): InlineKeyboard
     {
         $rows = [];
         $period = CarbonPeriod::create(Carbon::now()->subMonths(3), Carbon::now());
