@@ -44,7 +44,8 @@ class ApiClient
         $text = self::parseResponse(new GoogleSpreadSheetParser(), $response);
 
         if (!empty($text)) {
-            $text .= $this->loadAdditionallyInfo($userId, $response);
+            // todo разобраться с датой обновления
+//            $text .= $this->loadAdditionallyInfo($userId, $response);
         }
 
         return $text;
