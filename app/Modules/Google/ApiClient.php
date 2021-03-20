@@ -41,6 +41,7 @@ class ApiClient
             return self::TOKEN_IS_EXPIRED;
         }
 
+        $this->statisticUrl = self::statisticUrl($response);
         $text = self::parseResponse(new GoogleSpreadSheetParser(), $response);
 
         if (!empty($text)) {
@@ -58,7 +59,6 @@ class ApiClient
      */
     private function loadAdditionallyInfo(int $userId, array $generalResponse): string
     {
-        $this->statisticUrl = self::statisticUrl($generalResponse);
         $info = $this->fetchInfoFile($userId, $generalResponse['spreadsheetId']);
 
         if (isset($info['error'])) {
