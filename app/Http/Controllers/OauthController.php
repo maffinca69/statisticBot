@@ -32,9 +32,9 @@ class OauthController extends Controller
     {
         $authenticated = $this->service->authByCode($request->all());
         if ($authenticated) {
-            return 'Авторизация прошла успешно. Можете вернуться обратно в бота';
+            return view('successful_auth');
         }
 
-        return 'Произошла ошибка';
+        return view('error_auth');
     }
 }
