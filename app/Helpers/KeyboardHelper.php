@@ -21,16 +21,20 @@ class KeyboardHelper
      */
     public static function inlineKeyboardLinkButton(string $url): InlineKeyboard
     {
-        return new InlineKeyboard([
-            new InlineKeyboardButton([
-                'text' => self::STATISTIC_LINK_TEXT,
-                'url' => $url
-            ]),
-            new InlineKeyboardButton([
-                'text' => self::ACTUAL_STATISTIC_TEXT,
-                'callback_data' => 'request'
-            ]),
-        ]);
+        return new InlineKeyboard(
+            [
+                new InlineKeyboardButton([
+                    'text' => self::STATISTIC_LINK_TEXT,
+                    'url' => $url
+                ]),
+            ],
+            [
+                new InlineKeyboardButton([
+                    'text' => self::ACTUAL_STATISTIC_TEXT,
+                    'callback_data' => 'request'
+                ]),
+            ]
+        );
     }
 
     /**
