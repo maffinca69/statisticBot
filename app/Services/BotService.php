@@ -94,10 +94,25 @@ class BotService
                     }
 
                     return BotHelper::sendGeneralMessage($chatId, '🛠 Произошла ошибка');
+                case 'request':
+                    return $this->requestStatistic($chatId, $userId);
+
             }
         }
 
 
+        return $this->requestStatistic($chatId, $userId, $callback);
+    }
+
+    /**
+     * @param $chatId
+     * @param $userId
+     * @param $callback
+     * @return ServerResponse
+     * @throws TelegramException
+     */
+    private function requestStatistic($chatId, $userId, $callback = null): ServerResponse
+    {
         if ($text = $this->client->fetchSpreadSheet($userId, $callback)) {
             return BotHelper::sendGeneralMessage($chatId, $text, $this->client->statisticUrl);
         }
