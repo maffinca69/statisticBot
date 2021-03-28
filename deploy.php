@@ -28,7 +28,7 @@ host('193.109.78.189')
     ->set('deploy_path', '/var/www/{{application}}')
     ->set(
         'composer_options',
-        '{{composer_action}} --ignore-platform-reqs'
+        '{{composer_action}} --ignore-platform-reqs --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader'
     );
 
 
