@@ -34,18 +34,22 @@ host('193.109.78.189')
 
 // Tasks
 
-task('build', function () {
-    run('cd {{release_path}} && build');
-});
+// Main deploy task which consist of 4 other steps
+task('deploy', [
+    'release',
+    'cleanup',
+    'success'
+]);
+
+task('release', [
+    'deploy:prepare',
+    'deploy:release',
+    'deploy:shared',
+    'deploy:writable',
+]);
 
 task('restart:fpm', function () {
-   run('sudo /etc/init.d/php7.4-fpm restart');
+    run('sudo /etc/init.d/php7.4-fpm restart');
 });
 
-// [Optional] if deploy fails automatically unlock.
-after('deploy:failed', 'deploy:unlock');
-after('deploy:unlock', 'restart:fpm');
-
-// Migrate database before symlink new release.
-
-before('deploy:symlink', 'artisan:migrate');
+after('deploy:success', 'restart:fpm');
