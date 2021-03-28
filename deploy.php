@@ -64,3 +64,6 @@ task('deploy', [
     'deploy:unlock',
     'restart:fpm',
 ]);
+
+after('deploy:failed', 'deploy:unlock');
+
