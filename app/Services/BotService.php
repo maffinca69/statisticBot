@@ -34,6 +34,7 @@ class BotService
     public function execute(Update $update): ServerResponse
     {
         $this->initializeCommands();
+        $this->getTelegram()->initializeCallbacks();
         $this->getTelegram()->processUpdate($update);
 
         $chatId = $this->telegramInstance->getChatId();
