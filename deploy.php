@@ -25,7 +25,12 @@ add('writable_dirs', []);
 host('193.109.78.189')
     ->user('deployer')
     ->identityFile('~/.ssh/deployerkey')
-    ->set('deploy_path', '/var/www/{{application}}');
+    ->set('deploy_path', '/var/www/{{application}}')
+    ->set(
+        'composer_options',
+        '{{composer_action}} --ignore-platform-reqs --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader'
+    );
+
 
 // Tasks
 
