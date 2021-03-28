@@ -37,7 +37,6 @@ host('193.109.78.189')
 // Main deploy task which consist of 4 other steps
 task('deploy', [
     'release',
-    'cleanup',
 ]);
 
 task('release', [
@@ -45,10 +44,11 @@ task('release', [
     'deploy:release',
     'deploy:shared',
     'deploy:writable',
+    'deploy:cleanup',
+    'deploy:success',
 ]);
 
 task('restart:fpm', function () {
     run('sudo /etc/init.d/php7.4-fpm restart');
 });
-
-after('deploy:cleanup', 'restart:fpm');
+after('deploy:release', 'restart:fpm');
