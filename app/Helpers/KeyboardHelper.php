@@ -12,7 +12,7 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 class KeyboardHelper
 {
     public const STATISTIC_LINK_TEXT = 'Ссылка на расчетку';
-    public const ACTUAL_STATISTIC_TEXT = 'Актуальная расчетка';
+    public const ACTUAL_STATISTIC_TEXT = 'Актуальная расчетка1';
     public const LOGOUT_CONFIRM_TEXT = 'Подтвердить';
 
     /**
