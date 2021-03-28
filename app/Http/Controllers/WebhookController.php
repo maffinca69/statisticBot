@@ -22,6 +22,8 @@ class WebhookController extends Controller
 
         $this->botService = $service;
         $this->tokenService = $tokenService;
+
+        $this->botService->setTelegram($this->telegram);
     }
 
     /**
