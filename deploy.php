@@ -38,7 +38,6 @@ host('193.109.78.189')
 task('deploy', [
     'release',
     'cleanup',
-    'success'
 ]);
 
 task('release', [
@@ -52,4 +51,4 @@ task('restart:fpm', function () {
     run('sudo /etc/init.d/php7.4-fpm restart');
 });
 
-after('deploy:success', 'restart:fpm');
+after('deploy:cleanup', 'restart:fpm');
