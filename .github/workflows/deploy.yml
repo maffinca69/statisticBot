@@ -1,0 +1,19 @@
+name: Blog Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Deploy code to prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Deploy
+        uses: musps/action-deployer-php@master
+        with:
+          args: deploy
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PROD_KEY }}
