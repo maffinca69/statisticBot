@@ -46,6 +46,9 @@ task('artisan:storage:link', function() {})->setPrivate();
 task('artisan:up', function() {})->setPrivate();
 task('artisan:view:cache', function() {})->setPrivate();
 task('artisan:view:clear', function() {})->setPrivate();
+task('restart:fpm', function () {
+    run('sudo /etc/init.d/php7.4-fpm restart');
+});
 
 // Tasks
 task('deploy', [
@@ -59,10 +62,5 @@ task('deploy', [
     'deploy:writable',
     'deploy:symlink',
     'deploy:unlock',
-    'cleanup',
+    'restart:fpm',
 ]);
-
-task('restart:fpm', function () {
-    run('sudo /etc/init.d/php7.4-fpm restart');
-});
-after('deploy:cleanup', 'restart:fpm');
