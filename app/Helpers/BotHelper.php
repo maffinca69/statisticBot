@@ -33,33 +33,4 @@ class BotHelper
         return Request::sendMessage($params);
     }
 
-    /**
-     * @param    int    $chatId
-     * @return ServerResponse
-     * @throws TelegramException
-     */
-    public static function sendSelectKeyboard(int $chatId)
-    {
-        $keyboard = KeyboardHelper::inlineKeyboardSelectMonth();
-
-        return Request::sendMessage([
-            'chat_id' => $chatId,
-            'text' => 'Выберите месяц со статистикой',
-            'reply_markup' => $keyboard
-        ]);
-    }
-
-    /**
-     * @param    int    $chatId
-     * @return ServerResponse
-     * @throws TelegramException
-     */
-    public static function sendConfirmLogoutMessage(int $chatId)
-    {
-        return Request::sendMessage([
-            'chat_id' => $chatId,
-            'text' => 'Вы действительно хотите выйти из аккаунта?',
-            'reply_markup' => KeyboardHelper::inlineLogoutKeyboard()
-        ]);
-    }
 }

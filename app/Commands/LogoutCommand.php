@@ -4,8 +4,8 @@
 namespace App\Commands;
 
 
-use App\Helpers\BotHelper;
-use Longman\TelegramBot\Commands\UserCommand;
+use App\Helpers\KeyboardHelper;
+use App\Modules\Telegram\UserCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 
 class LogoutCommand extends UserCommand
@@ -13,8 +13,8 @@ class LogoutCommand extends UserCommand
 
     public function execute(): ServerResponse
     {
-        $chatId = $this->update->getMessage()->getChat()->getId();
-
-        return BotHelper::sendConfirmLogoutMessage($chatId);
+        return $this->replyToChat('Вы действительно хотите выйти из аккаунта?', [
+            'reply_markup' => KeyboardHelper::inlineLogoutKeyboard()
+        ]);
     }
 }

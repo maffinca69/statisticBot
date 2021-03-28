@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 
 use App\Services\BotService;
+use App\Services\OAuthService;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Longman\TelegramBot\Entities\ServerResponse;
@@ -29,7 +30,7 @@ class WebhookController extends Controller
     /**
      * Bot webhook function
      *
-     * @param    Request    $request
+     * @param Request $request
      * @return ServerResponse|void
      */
     public function handle(Request $request)
@@ -45,7 +46,7 @@ class WebhookController extends Controller
      * Set current telegram webhook
      * For setting local/prod workspace
      *
-     * @param    Request    $request
+     * @param Request $request
      * @return ServerResponse
      * @throws TelegramException
      */

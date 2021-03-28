@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\Google;
 
 use App\Helpers\CacheHelper;
@@ -8,6 +9,7 @@ use App\Parsers\ParserInterface;
 use App\Services\TokenService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ApiClient
 {
@@ -21,8 +23,8 @@ class ApiClient
     public string $statisticUrl = '';
 
     /**
-     * @param    int    $userId
-     * @param    null    $sheetName
+     * @param int $userId
+     * @param null $sheetName
      * @return string - name of list spreadsheet
      */
     public function fetchSpreadSheet(int $userId, $sheetName = null)
@@ -53,8 +55,8 @@ class ApiClient
     }
 
     /**
-     * @param    int    $userId
-     * @param    array    $generalResponse
+     * @param int $userId
+     * @param array $generalResponse
      * @return string
      */
     private function loadAdditionallyInfo(int $userId, array $generalResponse): string
@@ -72,7 +74,7 @@ class ApiClient
     /**
      * Build current spreadsheet link
      *
-     * @param    array    $data - google spreadsheet response
+     * @param array $data - google spreadsheet response
      * @return string
      */
     private static function statisticUrl(array $data): string
@@ -80,7 +82,7 @@ class ApiClient
         $sheetId = current($data['sheets'])['properties']['sheetId'];
         $spreadsheetId = $data['spreadsheetId'];
 
-        return sprintf(self::SPREADSHEET_BASE_URL,$spreadsheetId, $sheetId);
+        return sprintf(self::SPREADSHEET_BASE_URL, $spreadsheetId, $sheetId);
     }
 
     /**
@@ -106,7 +108,7 @@ class ApiClient
     }
 
     /**
-     * @param    int    $userId
+     * @param int $userId
      * @param    $fileId
      * @return array|mixed
      */
@@ -123,8 +125,8 @@ class ApiClient
     /**
      * Return formatted value
      *
-     * @param    ParserInterface    $parser
-     * @param    array    $data
+     * @param ParserInterface $parser
+     * @param array $data
      * @return string
      */
     private static function parseResponse(ParserInterface $parser, array $data)

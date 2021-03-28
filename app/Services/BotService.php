@@ -4,140 +4,75 @@ namespace App\Services;
 
 use App\Helpers\BotHelper;
 use App\Helpers\CacheHelper;
-use App\Modules\Google\ApiClient;
-use Longman\TelegramBot\ChatAction;
-use Longman\TelegramBot\Entities\CallbackQuery;
+use App\Modules\Telegram\Telegram;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
-use Longman\TelegramBot\Telegram;
 
 class BotService
 {
-    private ApiClient $client;
     private OAuthService $authService;
 
-    public const SUCCESS_SYNC_TEXT = '🎉 Синхронизация выполнена'.PHP_EOL.'Отправьте /start, чтобы получить статистику';
+    public const SUCCESS_SYNC_TEXT = '🎉 Синхронизация выполнена' . PHP_EOL . 'Отправьте /start, чтобы получить статистику';
     public const INVALID_STATISTIC_URL = 'Неверная ссылка на расчетку';
-    public const ERROR_TEXT = 'Произошла ошибка при обработке расчетки';
 
     private Telegram $telegramInstance;
 
-    private $sourceUpdate;
-
-    /** @var CallbackQuery|Update */
-    private $currentUpdate;
-
-    private $chatId;
-    private $userId;
-
-    public function __construct(ApiClient $client, OAuthService $authService)
+    public function __construct(OAuthService $authService)
     {
-        $this->client = $client;
         $this->authService = $authService;
     }
 
     /**
      * General bot logic function
      *
-     * @param    Update    $update
+     * @param Update $update
      * @return ServerResponse
      * @throws TelegramException
      */
     public function execute(Update $update): ServerResponse
     {
-        $this->prepareUpdate($update);
+        $this->initializeCommands();
+        $this->getTelegram()->processUpdate($update);
 
-        $this->sendTypingAction();
+        $chatId = $this->telegramInstance->getChatId();
+        $userId = $this->telegramInstance->getUserId();
 
         // Auth
-        if (!CacheHelper::getAccessTokenByUserId($this->userId)) {
-            return $this->authService->auth($this->userId);
+        if (!CacheHelper::getAccessTokenByUserId($userId)) {
+            return $this->authService->auth($userId);
         }
 
         // Save spreadsheet url
-        if (!CacheHelper::getSpreadSheetIdByUserId($this->userId)) {
+        if (!CacheHelper::getSpreadSheetIdByUserId($userId)) {
             $text = $update->getMessage()->getText();
             preg_match('/spreadsheets\/d\/([a-zA-Z0-9-_]+)/', $text, $textMatched);
             if (count($textMatched) < 2) {
-                return BotHelper::sendGeneralMessage($this->chatId, self::INVALID_STATISTIC_URL);
+                return BotHelper::sendGeneralMessage($chatId, self::INVALID_STATISTIC_URL);
             }
 
-            $this->authService->saveSpreadSheetId($this->userId, $textMatched[1]);
+            $this->authService->saveSpreadSheetId($userId, $textMatched[1]);
 
-            return BotHelper::sendGeneralMessage($this->chatId, self::SUCCESS_SYNC_TEXT);
+            return BotHelper::sendGeneralMessage($chatId, self::SUCCESS_SYNC_TEXT);
         }
 
-        $callback = $update->getCallbackQuery() ? $update->getCallbackQuery()->getData() : null;
-
-        // Callback
-        // todo refactoring... (maybe rewrite to class)
-        if ($callback) {
-            switch ($callback) {
-                case 'logout':
-                    if ($this->authService->logout($this->userId)) {
-                        return BotHelper::sendGeneralMessage($this->chatId, '🚪 Вы успешно вышли из аккаунта');
-                    }
-
-                    return BotHelper::sendGeneralMessage($this->chatId, '🛠 Произошла ошибка');
-                case 'request':
-                    return $this->requestStatistic();
-
-            }
+        // Disable command reaction
+        if ($update->getUpdateType() !== 'callback_query' && $update->getMessage()->getCommand()) {
+            return Request::emptyResponse();
         }
 
-        return $this->requestStatistic($callback);
-    }
-
-    private function sendTypingAction()
-    {
-        Request::sendChatAction([
-            'chat_id' => $this->chatId,
-            'action' => ChatAction::TYPING
-        ]);
-    }
-
-    /**
-     * @param Update $update
-     */
-    private function prepareUpdate(Update $update)
-    {
-        $this->sourceUpdate = $update;
-        $this->currentUpdate = $update->getCallbackQuery() ?? $update;
-        $this->chatId = $this->currentUpdate->getMessage()->getChat()->getId();
-
-        $this->userId = $update->getCallbackQuery() ?
-            $update->getCallbackQuery()->getFrom()->getId() : // callback
-            $update->getMessage()->getFrom()->getId(); // message
-
-        $this->initializeCommands();
+        // text message
+        return Request::emptyResponse();
     }
 
     private function initializeCommands()
     {
         $commands_paths = [
-            __DIR__ . '/../../Commands',
+            __DIR__ . '/../Commands',
         ];
 
         $this->getTelegram()->addCommandsPaths($commands_paths);
-
-        $this->getTelegram()->processUpdate($this->sourceUpdate);
-    }
-
-    /**
-     * @param $callback
-     *
-     * @return ServerResponse
-     * @throws TelegramException
-     */
-    private function requestStatistic($callback = null): ServerResponse
-    {
-        if ($text = $this->client->fetchSpreadSheet($this->userId, $callback)) {
-            return BotHelper::sendGeneralMessage($this->chatId, $text, $this->client->statisticUrl);
-        }
-
-        return BotHelper::sendGeneralMessage($this->chatId, self::ERROR_TEXT);
     }
 
     public function setTelegram(Telegram $telegram)

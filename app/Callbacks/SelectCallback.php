@@ -1,16 +1,16 @@
 <?php
 
 
-namespace App\Commands;
+namespace App\Callbacks;
 
 
 use App\Helpers\KeyboardHelper;
-use App\Modules\Telegram\UserCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 
-class SelectCommand extends UserCommand
+class SelectCallback extends Callback
 {
 
+    // todo: копипаст из selectCommand. Нужно добавить поддержку вызова комманд из колбэков
     public function execute(): ServerResponse
     {
         $keyboard = KeyboardHelper::inlineKeyboardSelectMonth();
