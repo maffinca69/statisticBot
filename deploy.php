@@ -44,8 +44,6 @@ task('release', [
     'deploy:release',
     'deploy:shared',
     'deploy:writable',
-    'deploy:cleanup',
-    'deploy:success',
 ]);
 
 task('restart:fpm', function () {
