@@ -52,7 +52,7 @@ class Telegram extends \Longman\TelegramBot\Telegram
     }
 
     protected $callbackPaths = [
-        __DIR__ . '/../Callbacks',
+        __DIR__ . '/../../Callbacks',
     ];
 
     protected $callbackObjects = [];
