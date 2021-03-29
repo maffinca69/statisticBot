@@ -41,7 +41,8 @@ class Controller extends BaseController
 
         $this->telegram->addCommandsPaths($commands_paths, false);
 
-        if (!empty($data)) {
+        $input = \Longman\TelegramBot\Request::getInput();
+        if (!empty($input)) {
             $this->telegram->handle();
         }
     }
