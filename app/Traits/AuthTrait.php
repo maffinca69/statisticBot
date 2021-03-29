@@ -21,7 +21,7 @@ trait AuthTrait
      */
     public function isAuth(): bool
     {
-        $userId = $this->update->getMessage()->getFrom()->getId();
+        $userId = $this->telegram->getUserId();
 
         return CacheHelper::getAccessTokenByUserId($userId) && CacheHelper::getSpreadSheetIdByUserId($userId);
     }
