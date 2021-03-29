@@ -60,20 +60,27 @@ class Telegram extends \Longman\TelegramBot\Telegram
     public function processUpdate(Update $update): ServerResponse
     {
         $response = parent::processUpdate($update);
-        $this->prepareUpdate();
+        $this->prepareUpdate($update);
 
         return $response;
     }
 
-    private function prepareUpdate()
+    private function prepareUpdate(Update $update)
     {
-        $currentUpdate = $this->update->getCallbackQuery() ?? $this->update;
+        switch ($update->getUpdateType()) {
+            case 'callback_query':
+                $callbackQuery = $update->getCallbackQuery();
 
-        $this->setChatId($currentUpdate->getMessage()->getChat()->getId());
+                $this->setUserId($callbackQuery->getFrom()->getId());
+                $this->setChatId($callbackQuery->getMessage()->getChat()->getId());
+                break;
+            case 'message':
+                $message = $update->getMessage();
 
-        $this->setUserId($this->update->getCallbackQuery() ?
-            $this->update->getCallbackQuery()->getFrom()->getId() : // callback
-            $this->update->getMessage()->getFrom()->getId());
+                $this->setUserId($message->getFrom()->getId());
+                $this->setChatId($message->getChat()->getId());
+                break;
+        }
     }
 
     public function initializeCallbacks()
