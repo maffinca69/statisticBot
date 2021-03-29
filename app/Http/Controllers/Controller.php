@@ -40,6 +40,9 @@ class Controller extends BaseController
         ];
 
         $this->telegram->addCommandsPaths($commands_paths, false);
-        $this->telegram->handle();
+
+        if (!empty($data)) {
+            $this->telegram->handle();
+        }
     }
 }
