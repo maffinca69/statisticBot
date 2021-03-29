@@ -33,8 +33,6 @@ class BotService
      */
     public function execute(Update $update): ServerResponse
     {
-        $this->initializeCommands();
-        $this->getTelegram()->processUpdate($update);
         $this->getTelegram()->initializeCallbacks();
 
         $chatId = $this->telegramInstance->getChatId();
@@ -65,15 +63,6 @@ class BotService
 
         // text message
         return Request::emptyResponse();
-    }
-
-    private function initializeCommands()
-    {
-        $commands_paths = [
-            __DIR__ . '/../Commands',
-        ];
-
-        $this->getTelegram()->addCommandsPaths($commands_paths);
     }
 
     public function setTelegram(Telegram $telegram)

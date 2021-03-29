@@ -33,5 +33,13 @@ class Controller extends BaseController
         $this->telegram->useGetUpdatesWithoutDatabase();
 
         $this->update = new Update($data, $username);
+        $this->telegram->prepareUpdate($this->update);
+
+        $commands_paths = [
+            __DIR__ . '/../../Commands',
+        ];
+
+        $this->telegram->addCommandsPaths($commands_paths, false);
+        $this->telegram->handle();
     }
 }

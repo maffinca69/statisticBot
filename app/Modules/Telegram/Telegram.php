@@ -57,15 +57,7 @@ class Telegram extends \Longman\TelegramBot\Telegram
 
     protected $callbackObjects = [];
 
-    public function processUpdate(Update $update): ServerResponse
-    {
-        $response = parent::processUpdate($update);
-        $this->prepareUpdate($update);
-
-        return $response;
-    }
-
-    private function prepareUpdate(Update $update)
+    public function prepareUpdate(Update $update)
     {
         switch ($update->getUpdateType()) {
             case 'callback_query':
