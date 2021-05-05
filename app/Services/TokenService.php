@@ -25,7 +25,7 @@ class TokenService
      * @param    int    $userId - user which was authenticated
      * @return bool
      */
-    public function saveToken(array $data, int $userId)
+    public function saveToken(array $data, int $userId): bool
     {
         $savedAccess = Cache::put(CacheHelper::CACHE_ACCESS_TOKEN_KEY  . $userId, $data['access_token']);
 
@@ -47,18 +47,16 @@ class TokenService
      *
      * @param $userId
      */
-    public function refreshToken($userId)
+    public function refreshToken($userId): void
     {
         $this->client->fetchRefreshToken($userId);
     }
 
     /**
-     * Adding to queue
-     *
      * @param    int    $expire - seconds
      * @param $userId
      */
-    public function scheduleRefreshToken(int $expire, $userId)
+    public function scheduleRefreshToken(int $expire, $userId): void
     {
         dispatch((new RefreshTokenJob($this, $userId))->delay($expire));
     }

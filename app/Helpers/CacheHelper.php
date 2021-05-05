@@ -58,12 +58,14 @@ class CacheHelper
     }
 
     /**
-     * Get all ids user which logged
+     * Get all ids users which logged
+     *
+     * @return array
      */
-    public static function getAllIdsUsersFromCache(): array
+    public static function getUsersIds(): array
     {
         $redis = Cache::getRedis();
-        $keys = $redis->keys("*spreadsheet_id*");
+        $keys = $redis->keys("*spreadsheet_id*"); // use spreadsheet, because finally step auth
         $ids = [];
         foreach ($keys as $key) {
             preg_match('/spreadsheet_id_([a-zA-Z0-9-_]+)/', $key, $data);
@@ -81,7 +83,7 @@ class CacheHelper
      * @param    int    $userId
      * @return bool
      */
-    public static function revokeAccessToken(int $userId)
+    public static function revokeAccessToken(int $userId): bool
     {
         return Cache::forget(CacheHelper::CACHE_ACCESS_TOKEN_KEY . $userId);
     }
@@ -90,7 +92,7 @@ class CacheHelper
      * @param    int    $userId
      * @return bool
      */
-    public static function revokeRefreshToken(int $userId)
+    public static function revokeRefreshToken(int $userId): bool
     {
         return Cache::forget(CacheHelper::CACHE_REFRESH_TOKEN_KEY . $userId);
     }
@@ -99,7 +101,7 @@ class CacheHelper
      * @param    int    $userId
      * @return bool
      */
-    public static function revokeSpreadSheetId(int $userId)
+    public static function revokeSpreadSheetId(int $userId): bool
     {
         return Cache::forget(CacheHelper::CACHE_SPREADSHEET_ID_KEY . $userId);
     }

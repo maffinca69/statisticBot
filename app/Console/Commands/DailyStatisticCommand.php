@@ -62,7 +62,7 @@ class DailyStatisticCommand extends Command
      */
     public function handle(ApiClient $client)
     {
-        $ids = CacheHelper::getAllIdsUsersFromCache();
+        $ids = CacheHelper::getUsersIds();
 
         if (empty($ids)) {
             return true;
@@ -70,7 +70,7 @@ class DailyStatisticCommand extends Command
 
         foreach ($ids as $id) {
             if ($text = $client->fetchSpreadSheet($id)) {
-                BotHelper::sendGeneralMessage($id, $text, $client->statisticUrl);
+                BotHelper::sendBaseMessage($id, $text, $client->statisticUrl);
 
                 $this->info('Statistic was send! ' . $id);
             }

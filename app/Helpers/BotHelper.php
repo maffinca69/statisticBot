@@ -15,10 +15,11 @@ class BotHelper
      * @param    int    $chatId
      * @param    string    $text
      * @param    string    $statisticUrl
+     *
      * @return ServerResponse
      * @throws TelegramException
      */
-    public static function sendGeneralMessage(int $chatId, string $text, string $statisticUrl = '')
+    public static function sendBaseMessage(int $chatId, string $text, string $statisticUrl = ''): ServerResponse
     {
         $params = [
             'chat_id' => $chatId,

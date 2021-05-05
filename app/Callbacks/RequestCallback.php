@@ -36,9 +36,9 @@ class RequestCallback extends Callback
 
         $data = !in_array($this->callbackQuery->getData(), $this->aliases()) ? null : $this->callbackQuery->getData();
         if ($text = $this->client->fetchSpreadSheet($userId, $data)) {
-            return BotHelper::sendGeneralMessage($chatId, $text, $this->client->statisticUrl);
+            return BotHelper::sendBaseMessage($chatId, $text, $this->client->statisticUrl);
         }
 
-        return BotHelper::sendGeneralMessage($chatId, self::ERROR_TEXT);
+        return BotHelper::sendBaseMessage($chatId, self::ERROR_TEXT);
     }
 }

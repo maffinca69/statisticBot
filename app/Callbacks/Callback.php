@@ -11,6 +11,7 @@ use Longman\TelegramBot\Entities\CallbackQuery;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
+use MongoDB\Driver\Server;
 
 abstract class Callback
 {
@@ -44,19 +45,31 @@ abstract class Callback
         return Request::emptyResponse();
     }
 
+    /**
+     * @return bool
+     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
+    /**
+     * Aliases for trigger callback
+     *
+     * @return array
+     */
     public function aliases(): array
     {
         return [];
     }
 
-    private function sendTypingAction($chatId)
+    /**
+     * @param $chatId
+     * @return ServerResponse
+     */
+    private function sendTypingAction($chatId): ServerResponse
     {
-        Request::sendChatAction([
+        return Request::sendChatAction([
             'chat_id' => $chatId,
             'action' => ChatAction::TYPING
         ]);

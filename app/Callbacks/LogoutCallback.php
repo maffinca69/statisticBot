@@ -34,9 +34,9 @@ class LogoutCallback extends Callback
         $chatId = $this->callbackQuery->getMessage()->getChat()->getId();
 
         if ($this->authService->logout($userId)) {
-            return BotHelper::sendGeneralMessage($chatId, '🚪 Вы успешно вышли из аккаунта');
+            return BotHelper::sendBaseMessage($chatId, '🚪 Вы успешно вышли из аккаунта');
         }
 
-        return BotHelper::sendGeneralMessage($chatId, '🛠 Произошла ошибка');
+        return BotHelper::sendBaseMessage($chatId, '🛠 Произошла ошибка');
     }
 }

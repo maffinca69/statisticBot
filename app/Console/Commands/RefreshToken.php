@@ -45,7 +45,7 @@ class RefreshToken extends Command
      */
     public function handle(TokenService $service)
     {
-        $ids = CacheHelper::getAllIdsUsersFromCache();
+        $ids = CacheHelper::getUsersIds();
 
         if (empty($ids)) {
             return true;

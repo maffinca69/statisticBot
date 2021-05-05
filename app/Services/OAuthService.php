@@ -82,7 +82,7 @@ class OAuthService
      * @param    int    $userId
      * @return bool
      */
-    public function logout(int $userId)
+    public function logout(int $userId): bool
     {
         $revokeAccess = CacheHelper::revokeAccessToken($userId);
         $revokeRefresh = CacheHelper::revokeRefreshToken($userId);
@@ -98,7 +98,7 @@ class OAuthService
      * @param    string    $spreadsheetId
      * @return bool
      */
-    public function saveSpreadSheetId(int $userId, string $spreadsheetId)
+    public function saveSpreadSheetId(int $userId, string $spreadsheetId): bool
     {
         return Cache::put(CacheHelper::CACHE_SPREADSHEET_ID_KEY . $userId, $spreadsheetId);
     }

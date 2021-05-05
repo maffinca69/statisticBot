@@ -35,7 +35,7 @@ class StartCommand extends UserCommand
         ]);
 
         if ($text = $this->client->fetchSpreadSheet($userId)) {
-            return BotHelper::sendGeneralMessage($chatId, $text, $this->client->statisticUrl);
+            return BotHelper::sendBaseMessage($chatId, $text, $this->client->statisticUrl);
         }
 
         return $this->replyToChat(RequestCallback::ERROR_TEXT);

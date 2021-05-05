@@ -48,12 +48,12 @@ class BotService
             $text = $update->getMessage()->getText();
             preg_match('/spreadsheets\/d\/([a-zA-Z0-9-_]+)/', $text, $textMatched);
             if (count($textMatched) < 2) {
-                return BotHelper::sendGeneralMessage($chatId, self::INVALID_STATISTIC_URL);
+                return BotHelper::sendBaseMessage($chatId, self::INVALID_STATISTIC_URL);
             }
 
             $this->authService->saveSpreadSheetId($userId, $textMatched[1]);
 
-            return BotHelper::sendGeneralMessage($chatId, self::SUCCESS_SYNC_TEXT);
+            return BotHelper::sendBaseMessage($chatId, self::SUCCESS_SYNC_TEXT);
         }
 
         // Disable command reaction
