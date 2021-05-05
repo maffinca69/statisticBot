@@ -15,6 +15,7 @@ use MongoDB\Driver\Server;
 
 abstract class Callback
 {
+    // todo нужно бы переписать на кастомную/дефолтную реализацию middleware
     use AuthTrait;
 
     protected bool $enabled = true;
