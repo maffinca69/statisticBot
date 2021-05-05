@@ -58,7 +58,7 @@ class OAuthService
 
     public function authByCode(array $data): bool
     {
-        $this->googleClient->authenticate($data['code']);
+        $this->googleClient->fetchAccessTokenWithAuthCode($data['code']);
         $tokenInfo = $this->googleClient->getAccessToken();
         $userId = intval($data['state']);
 

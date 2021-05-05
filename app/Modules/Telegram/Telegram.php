@@ -75,6 +75,14 @@ class Telegram extends \Longman\TelegramBot\Telegram
         }
     }
 
+    /**
+     * Init callback
+     *
+     * Return false if will be initialized or update type incorrect
+     *
+     * @return ServerResponse|bool
+     * @throws TelegramException
+     */
     public function initializeCallbacks()
     {
         $this->callbackObjects = $this->getCallbackList();
@@ -82,6 +90,8 @@ class Telegram extends \Longman\TelegramBot\Telegram
         if ($this->update->getUpdateType() === 'callback_query') {
             return $this->executeCallback($this->update->getCallbackQuery()->getData());
         }
+
+        return false;
     }
 
     /**
@@ -131,7 +141,7 @@ class Telegram extends \Longman\TelegramBot\Telegram
                 );
 
                 foreach ($files as $file) {
-                    //Remove "Command.php" from filename
+                    //Remove "Callback.php" from filename
                     $callback = $this->sanitizeCommand(substr($file->getFilename(), 0, -12));
                     $callbackName = mb_strtolower($callback);
 
@@ -156,7 +166,7 @@ class Telegram extends \Longman\TelegramBot\Telegram
                         }
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 throw new TelegramException('Error getting commands from path: ' . $path, $e);
             }
         }
