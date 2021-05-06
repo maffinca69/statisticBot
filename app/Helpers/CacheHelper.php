@@ -11,6 +11,7 @@ class CacheHelper
     public const CACHE_ACCESS_TOKEN_KEY = 'access_token_';
     public const CACHE_REFRESH_TOKEN_KEY = 'refresh_token_';
     public const CACHE_SPREADSHEET_ID_KEY = 'spreadsheet_id_';
+    public const CACHE_REDMINE_API_KEY = 'redmine_api_key_';
 
     /**
      * Get access token by user id
@@ -104,5 +105,14 @@ class CacheHelper
     public static function revokeSpreadSheetId(int $userId): bool
     {
         return Cache::forget(CacheHelper::CACHE_SPREADSHEET_ID_KEY . $userId);
+    }
+
+    /**
+     * @param int $userId - telegram userID
+     * @return string
+     */
+    public static function getRedmineUserApiKey(int $userId): string
+    {
+        return Cache::get(self::CACHE_REDMINE_API_KEY . $userId, '');
     }
 }

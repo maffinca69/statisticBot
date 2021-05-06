@@ -61,6 +61,7 @@ $app->singleton(
 
 $app->configure('app');
 $app->configure('bot');
+$app->configure('redmine');
 $app->configure('google');
 
 /*

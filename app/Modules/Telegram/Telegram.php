@@ -6,6 +6,7 @@ namespace App\Modules\Telegram;
 
 use App\Callbacks\Callback;
 use App\Helpers\BotHelper;
+use Illuminate\Support\Facades\Log;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -80,10 +81,8 @@ class Telegram extends \Longman\TelegramBot\Telegram
                 $this->setChatId($message->getChat()->getId());
                 break;
             default:
-                return BotHelper::sendBaseMessage(
-                    $this->getChatId(),
-                    'Не поддерживается'
-                );
+                Log::info('Unsupported');
+                return Request::emptyResponse();
         }
 
         return true;
