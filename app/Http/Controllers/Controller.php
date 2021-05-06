@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Modules\Telegram\Telegram;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
 
@@ -33,7 +34,9 @@ class Controller extends BaseController
         $this->telegram->useGetUpdatesWithoutDatabase();
 
         $this->update = new Update($data, $username);
-        $this->telegram->prepareUpdate($this->update);
+        if ($response = $this->telegram->prepareUpdate($this->update) instanceof ServerResponse) {
+            return $response;
+        }
 
         $commands_paths = [
             __DIR__ . '/../../Commands',

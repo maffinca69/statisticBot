@@ -5,6 +5,7 @@ namespace App\Modules\Telegram;
 
 
 use App\Callbacks\Callback;
+use App\Helpers\BotHelper;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -57,6 +58,12 @@ class Telegram extends \Longman\TelegramBot\Telegram
 
     protected $callbackObjects = [];
 
+    /**
+     * @param Update $update
+     *
+     * @return bool|ServerResponse
+     * @throws TelegramException
+     */
     public function prepareUpdate(Update $update)
     {
         switch ($update->getUpdateType()) {
@@ -72,7 +79,14 @@ class Telegram extends \Longman\TelegramBot\Telegram
                 $this->setUserId($message->getFrom()->getId());
                 $this->setChatId($message->getChat()->getId());
                 break;
+            default:
+                return BotHelper::sendBaseMessage(
+                    $this->getChatId(),
+                    'Не поддерживается'
+                );
         }
+
+        return true;
     }
 
     /**
