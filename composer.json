@@ -8,6 +8,7 @@
         "php": "7.4",
         "google/apiclient": "^2.0",
         "illuminate/redis": "^8.31",
+        "irazasyed/telegram-bot-sdk": "^3.4",
         "laravel/lumen-framework": "^8.0",
         "longman/telegram-bot": "^0.71.0",
         "predis/predis": "^1.1",

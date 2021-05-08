@@ -8,6 +8,7 @@ use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
+use Telegram\Bot\Keyboard\Keyboard;
 
 class KeyboardHelper
 {
@@ -23,26 +24,13 @@ class KeyboardHelper
      */
     public static function inlineKeyboardLinkButton(string $url): InlineKeyboard
     {
-        return new InlineKeyboard(
+        return [
             [
-                new InlineKeyboardButton([
-                    'text' => self::STATISTIC_LINK_TEXT,
-                    'url' => $url
-                ]),
-            ],
-            [
-                new InlineKeyboardButton([
-                    'text' => self::ACTUAL_STATISTIC_TEXT,
-                    'callback_data' => 'request'
-                ]),
-            ],
-            [
-                new InlineKeyboardButton([
-                    'text' => self::OTHER_MONTH_STATISTIC_TEXT,
-                    'callback_data' => 'select'
-                ]),
-            ],
-        );
+                Keyboard::inlineButton(['text' => self::STATISTIC_LINK_TEXT, 'url' => $url]),
+                Keyboard::inlineButton(['text' => self::ACTUAL_STATISTIC_TEXT, 'callback_data' => 'request']),
+                Keyboard::inlineButton(['text' => self::OTHER_MONTH_STATISTIC_TEXT, 'callback_data' => 'select'])
+            ]
+        ];
     }
 
     /**
@@ -80,15 +68,5 @@ class KeyboardHelper
         }
 
         return $result;
-    }
-
-    public static function inlineLogoutKeyboard(): InlineKeyboard
-    {
-        return new InlineKeyboard([
-            new InlineKeyboardButton([
-                'text' => self::LOGOUT_CONFIRM_TEXT,
-                'callback_data' => 'logout'
-            ])
-        ]);
     }
 }

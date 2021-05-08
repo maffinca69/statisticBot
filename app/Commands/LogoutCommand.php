@@ -5,16 +5,23 @@ namespace App\Commands;
 
 
 use App\Helpers\KeyboardHelper;
+use App\Keyboards\LogoutKeyboard;
+use App\Modules\Telegram\Command;
 use App\Modules\Telegram\UserCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 
-class LogoutCommand extends UserCommand
+class LogoutCommand extends Command
 {
 
-    public function execute(): ServerResponse
+    protected $name = 'logout';
+
+    protected $description = 'Выход из аккаунта';
+
+    protected function execute($arguments)
     {
-        return $this->replyToChat('Вы действительно хотите выйти из аккаунта?', [
-            'reply_markup' => KeyboardHelper::inlineLogoutKeyboard()
-        ]);
+        $this->getTelegram()->replyWithMessageKeyboard(
+            'Вы действительно хотите выйти из аккаунта?',
+            $this->getTelegram()->keyboard(new LogoutKeyboard())
+        );
     }
 }

@@ -6,7 +6,9 @@ namespace App\Console\Commands;
 
 use App\Helpers\BotHelper;
 use App\Helpers\CacheHelper;
+use App\Keyboards\BaseAuthKeyboard;
 use App\Modules\Google\ApiClient;
+use App\Modules\Telegram\Api;
 use Illuminate\Console\Command;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Telegram;
@@ -34,7 +36,7 @@ class DailyStatisticCommand extends Command
     protected $description = 'Send daily statistic';
 
     /**
-     * @var Telegram
+     * @var Api
      */
     protected $telegram;
 
@@ -46,11 +48,7 @@ class DailyStatisticCommand extends Command
     public function __construct()
     {
         parent::__construct();
-
-        $username = config('bot.username');
-
-        $this->telegram = new Telegram(config('bot.api_key'), $username);
-        $this->telegram->useGetUpdatesWithoutDatabase();
+        $this->telegram = new Api(config('bot.api_key'));
     }
 
     /**
@@ -70,7 +68,11 @@ class DailyStatisticCommand extends Command
 
         foreach ($ids as $id) {
             if ($text = $client->fetchSpreadSheet($id)) {
-                BotHelper::sendBaseMessage($id, $text, $client->statisticUrl);
+                $this->telegram->replyWithMessageKeyboard(
+                    $text,
+                    $this->telegram->keyboard(new BaseAuthKeyboard()),
+                    $id
+                );
 
                 $this->info('Statistic was send! ' . $id);
             }

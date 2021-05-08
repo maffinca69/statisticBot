@@ -8,6 +8,8 @@ use App\Helpers\CacheHelper;
 
 trait AuthTrait
 {
+    protected int $userId;
+
     /**
      * @return bool
      */
@@ -21,8 +23,12 @@ trait AuthTrait
      */
     public function isAuth(): bool
     {
-        $userId = $this->telegram->getUserId();
+        $update = $this->telegram->getWebhookUpdate();
 
-        return CacheHelper::getAccessTokenByUserId($userId) && CacheHelper::getSpreadSheetIdByUserId($userId);
+        $this->userId = $update->isType('callback_query') ?
+            $update->callbackQuery->from->id :
+            $update->message->from->id;
+
+        return CacheHelper::getAccessTokenByUserId($this->userId) && CacheHelper::getSpreadSheetIdByUserId($this->userId);
     }
 }

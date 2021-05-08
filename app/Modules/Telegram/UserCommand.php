@@ -4,30 +4,23 @@
 namespace App\Modules\Telegram;
 
 use App\Traits\AuthTrait;
-use Longman\TelegramBot\Entities\ServerResponse;
-use Longman\TelegramBot\Request;
+use Telegram\Bot\Commands\Command;
 
-class UserCommand extends \Longman\TelegramBot\Commands\UserCommand
+class UserCommand extends Command
 {
     // todo нужно бы переписать на кастомную/дефолтную реализацию middleware
     use AuthTrait;
 
-    public function preExecute(): ServerResponse
+    public function handle()
     {
         if (!$this->isAuthRequired()) {
-            return parent::preExecute();
+            return;
         }
 
         if ($this->isAuthRequired() && $this->isAuth()) {
-            return parent::preExecute();
+            return;
         }
 
-        return Request::emptyResponse();
-    }
-
-
-    public function execute(): ServerResponse
-    {
-        // ...
+        return $this->replyWithMessage();
     }
 }

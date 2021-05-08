@@ -5,41 +5,38 @@ namespace App\Http\Controllers;
 
 
 use App\Services\BotService;
-use App\Services\OAuthService;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Longman\TelegramBot\Entities\ServerResponse;
-use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request as TelegramRequest;
+use Telegram\Bot\Exceptions\TelegramSDKException;
+use Telegram\Bot\Objects\Message;
 
 class WebhookController extends Controller
 {
     private BotService $botService;
     private TokenService $tokenService;
 
-    public function __construct(Request $request, BotService $service, TokenService $tokenService)
+    public function __construct(BotService $service, TokenService $tokenService)
     {
-        parent::__construct($request);
+        parent::__construct();
 
         $this->botService = $service;
         $this->tokenService = $tokenService;
-
-        $this->botService->setTelegram($this->telegram);
     }
 
     /**
      * Bot webhook function
      *
      * @param Request $request
-     * @return ServerResponse|void
+     * @return bool|ServerResponse|Message
+     * @throws TelegramSDKException
      */
     public function handle(Request $request)
     {
-        if ($response = $this->botService->execute($this->update)) {
+        if ($response = $this->botService->execute($this->api)) {
             return $response;
         }
-
-        return TelegramRequest::emptyResponse();
     }
 
     /**
@@ -47,12 +44,11 @@ class WebhookController extends Controller
      * For setting local/prod workspace
      *
      * @param Request $request
-     * @return ServerResponse
-     * @throws TelegramException
+     * @return string
      */
     public function setWebhook(Request $request)
     {
-        $this->telegram->setWebhook(env('TELEGRAM_WEBHOOK_URL'));
-        return TelegramRequest::emptyResponse();
+//        $this->telegram->setWebhook(env('TELEGRAM_WEBHOOK_URL'));
+//        return 'ok';
     }
 }

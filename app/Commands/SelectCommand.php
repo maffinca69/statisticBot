@@ -4,19 +4,27 @@
 namespace App\Commands;
 
 
-use App\Helpers\KeyboardHelper;
-use App\Modules\Telegram\UserCommand;
-use Longman\TelegramBot\Entities\ServerResponse;
+use App\Keyboards\SelectMonthKeyboard;
+use App\Modules\Telegram\Command;
 
-class SelectCommand extends UserCommand
+class SelectCommand extends Command
 {
+    /**
+     * @var string Command Name
+     */
+    protected $name = "select";
 
-    public function execute(): ServerResponse
+    /**
+     * @var string Command Description
+     */
+    protected $description = "Выбрать месяц со статистикой";
+
+    protected function execute($arguments)
     {
-        $keyboard = KeyboardHelper::inlineKeyboardSelectMonth();
-
-        return $this->replyToChat('Выберите месяц со статистикой', [
-            'reply_markup' => $keyboard
-        ]);
+//        $this->replyWithMessage(['text' => 213]);
+        $this->getTelegram()->replyWithMessageKeyboard(
+            'Выберите месяц со статистикой',
+            $this->getTelegram()->keyboard(new SelectMonthKeyboard())
+        );
     }
 }

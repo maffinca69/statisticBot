@@ -5,39 +5,42 @@ namespace App\Commands;
 
 
 use App\Callbacks\RequestCallback;
-use App\Helpers\BotHelper;
+use App\Keyboards\BaseAuthKeyboard;
 use App\Modules\Google\ApiClient;
-use App\Modules\Telegram\UserCommand;
-use Longman\TelegramBot\ChatAction;
-use Longman\TelegramBot\Entities\ServerResponse;
-use Longman\TelegramBot\Entities\Update;
-use Longman\TelegramBot\Request;
-use Longman\TelegramBot\Telegram;
+use App\Modules\Telegram\Command;
+use Telegram\Bot\Actions;
 
-class StartCommand extends UserCommand
+class StartCommand extends Command
 {
+    /**
+     * @var string Command Name
+     */
+    protected $name = "start";
+
+    /**
+     * @var string Command Description
+     */
+    protected $description = "Start Command to get you started";
+
+
     private ApiClient $client;
 
-    public function __construct(Telegram $telegram, ?Update $update = null)
+    public function __construct()
     {
-        parent::__construct($telegram, $update);
-
         $this->client = new ApiClient();
     }
 
-    public function execute(): ServerResponse
+    public function execute($arguments)
     {
-        $userId = $this->update->getMessage()->getFrom()->getId();
-        $chatId = $this->update->getMessage()->getChat()->getId();
-        Request::sendChatAction([
-            'chat_id' => $chatId,
-            'action' => ChatAction::TYPING
-        ]);
+        $this->replyWithChatAction(['action' => Actions::TYPING]);
+
+        $userId = $userId = $this->update->message->from->id;
 
         if ($text = $this->client->fetchSpreadSheet($userId)) {
-            return BotHelper::sendBaseMessage($chatId, $text, $this->client->statisticUrl);
+            return $this->telegram->replyWithMessageKeyboard($text, $this->telegram->keyboard(new BaseAuthKeyboard()));
         }
 
-        return $this->replyToChat(RequestCallback::ERROR_TEXT);
+        return $this->replyWithMessage(['text' => RequestCallback::ERROR_TEXT]);
     }
+
 }
