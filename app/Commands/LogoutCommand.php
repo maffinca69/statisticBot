@@ -4,14 +4,16 @@
 namespace App\Commands;
 
 
-use App\Helpers\KeyboardHelper;
 use App\Keyboards\LogoutKeyboard;
 use App\Modules\Telegram\Command;
-use App\Modules\Telegram\UserCommand;
-use Longman\TelegramBot\Entities\ServerResponse;
 
 class LogoutCommand extends Command
 {
+    public function isAuthRequired(): bool
+    {
+        return false;
+    }
+
 
     protected $name = 'logout';
 

@@ -98,6 +98,7 @@ $app->configure('google');
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
 $app->register(\Sentry\Laravel\ServiceProvider::class);
+$app->register(\Telegram\Bot\Laravel\TelegramServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

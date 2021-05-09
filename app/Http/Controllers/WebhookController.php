@@ -8,7 +8,6 @@ use App\Services\BotService;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Longman\TelegramBot\Entities\ServerResponse;
-use Longman\TelegramBot\Request as TelegramRequest;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Objects\Message;
 
@@ -48,7 +47,7 @@ class WebhookController extends Controller
      */
     public function setWebhook(Request $request)
     {
-//        $this->telegram->setWebhook(env('TELEGRAM_WEBHOOK_URL'));
-//        return 'ok';
+        $this->api->setWebhook(['url' => env('TELEGRAM_WEBHOOK_URL')]);
+        return 'ok';
     }
 }

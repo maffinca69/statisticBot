@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\OAuthService;
 use Illuminate\Http\Request;
+use Telegram\Bot\Objects\Message;
 
 /**
  * Controller for Google OAuth 2.0
@@ -15,9 +16,9 @@ class OauthController extends Controller
 {
     private OAuthService $service;
 
-    public function __construct(Request $request, OAuthService $service)
+    public function __construct(OAuthService $service)
     {
-        parent::__construct($request);
+        parent::__construct();
 
         $this->service = $service;
     }
@@ -30,11 +31,20 @@ class OauthController extends Controller
      */
     public function callback(Request $request)
     {
-        $authenticated = $this->service->authByCode($request->all());
-        if ($authenticated) {
+        $id = $this->service->authByCode($request->all());
+        if ($id) {
+            $this->notifySuccessfullyAuthorize($id);
             return view('successful_auth');
         }
 
         return view('error_auth');
+    }
+
+    private function notifySuccessfullyAuthorize(int $userId): Message
+    {
+        return $this->api->sendMessage([
+            'chat_id' => $userId,
+            'text' => '🎉 Успешно авторизованы!' . PHP_EOL . 'Теперь отправьте ссылку на свою расчетку'
+        ]);
     }
 }

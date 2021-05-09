@@ -5,15 +5,13 @@ namespace App\Services;
 
 
 use App\Helpers\CacheHelper;
+use App\Modules\Telegram\Api;
 use Google\Exception;
 use Google_Client;
 use Google_Service_Sheets;
 use Illuminate\Support\Facades\Cache;
-use Longman\TelegramBot\Entities\InlineKeyboard;
-use Longman\TelegramBot\Entities\InlineKeyboardButton;
-use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\ServerResponse;
-use Longman\TelegramBot\Request;
+
+use Telegram;
 
 class OAuthService
 {
@@ -42,38 +40,29 @@ class OAuthService
         $this->googleClient->setIncludeGrantedScopes(true);   // incremental auth
     }
 
-    public function auth(int $userId): ServerResponse
+    public function auth(int $userId): string
     {
         $this->googleClient->setState((string)$userId);
-        $auth_url = $this->googleClient->createAuthUrl();
+        $url =  $this->googleClient->createAuthUrl();
 
-        return Request::sendMessage([
-            'chat_id' => $userId,
-            'reply_markup' => new InlineKeyboard([
-                new InlineKeyboardButton(['text' => 'Авторизоваться', 'url' => filter_var($auth_url, FILTER_SANITIZE_URL)])
-            ]),
-            'text' => '🔒 Необходимо авторизоваться'
-        ]);
+        return filter_var($url, FILTER_SANITIZE_URL);
     }
 
-    public function authByCode(array $data): bool
+    /**
+     * @param array $data
+     * @return false|int
+     */
+    public function authByCode(array $data)
     {
         $this->googleClient->fetchAccessTokenWithAuthCode($data['code']);
-        $tokenInfo = $this->googleClient->getAccessToken();
+        $tokenInfo = $this->googleClient->getAccessToken() ?? [];
         $userId = intval($data['state']);
 
         if ($this->tokenService->saveToken($tokenInfo, $userId)) {
-            // maybe refactoring...
-            Request::sendMessage([
-                'chat_id' => $userId,
-                'reply_markup' => Keyboard::remove(),
-                'text' => '🎉 Успешно авторизованы!' . PHP_EOL . 'Теперь отправьте ссылку на свою расчетку'
-            ]);
-
-            return true;
+            return $userId;
         }
 
-        return true;
+        return false;
     }
 
     /**

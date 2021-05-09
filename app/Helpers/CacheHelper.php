@@ -85,7 +85,12 @@ class CacheHelper
      */
     public static function revokeAccessToken(int $userId): bool
     {
-        return Cache::forget(CacheHelper::CACHE_ACCESS_TOKEN_KEY . $userId);
+        $key = CacheHelper::CACHE_ACCESS_TOKEN_KEY . $userId;
+        if (!Cache::has($key)) {
+            return true;
+        }
+
+        return Cache::forget(true);
     }
 
     /**
@@ -94,7 +99,12 @@ class CacheHelper
      */
     public static function revokeRefreshToken(int $userId): bool
     {
-        return Cache::forget(CacheHelper::CACHE_REFRESH_TOKEN_KEY . $userId);
+        $key = CacheHelper::CACHE_REFRESH_TOKEN_KEY . $userId;
+        if (!Cache::has($key)) {
+            return true;
+        }
+
+        return Cache::forget($key);
     }
 
     /**
@@ -103,6 +113,11 @@ class CacheHelper
      */
     public static function revokeSpreadSheetId(int $userId): bool
     {
-        return Cache::forget(CacheHelper::CACHE_SPREADSHEET_ID_KEY . $userId);
+        $key = CacheHelper::CACHE_SPREADSHEET_ID_KEY . $userId;
+        if (!Cache::has($key)) {
+            return true;
+        }
+
+        return Cache::forget($key);
     }
 }
