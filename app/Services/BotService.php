@@ -70,13 +70,10 @@ class BotService
     /**
      * @param Update $update
      * @param Api $telegram
-     * @throws TelegramSDKException
      */
     private function handleCallback(Update $update, Api $telegram)
     {
-        Log::info('Trigger callback');
         $data = $update->callbackQuery->data;
-        Log::info($data);
         switch ($data) {
             case 'request':
                 $telegram->triggerCommand('start', $update);

@@ -30,7 +30,6 @@ class StartCommand extends Command
         return self::getTitleMonth();
     }
 
-
     private ApiClient $client;
 
     public function __construct()

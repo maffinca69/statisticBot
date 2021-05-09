@@ -15,5 +15,8 @@
 
 $router->get('/', 'WebhookController@setWebhook');
 
-$router->post('/telegram-webhook', 'WebhookController@handle');
+$router->group(['middleware' => ['token', 'telegram']], function ($router) {
+    $router->post('/{token}/webhook', 'WebhookController@handle');
+});
+
 $router->get('/oauth2callback', 'OauthController@callback');
