@@ -16,7 +16,6 @@ class SelectCallback extends Callback
      */
     public function execute(): ServerResponse
     {
-        $command = $this->callbackQuery->getMessage()->getCommand();
-        return $this->telegram->executeCommand($command);
+        return $this->telegram->executeCommand('select');
     }
 }
