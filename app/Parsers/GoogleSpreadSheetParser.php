@@ -26,7 +26,7 @@ class GoogleSpreadSheetParser implements ParserInterface
         $trackedType = plural_form((int)$trackedValue, ['час', 'часа', 'часов']);
 
         $salaryValue = current($sheet['data'])['rowData'][3]['values'][8]['formattedValue'];
-        $preSalaryValue = ($rate * $trackedValue) < $salaryValue ? sprintf(' (%s)', $rate * $trackedValue) : 'df';
+        $preSalaryValue = ($rate * $trackedValue) < $salaryValue ? sprintf(' (%s)', $rate * $trackedValue) : ($rate . ' * ' . $trackedValue);
         $salary = '💸 ' . $salaryValue . PHP_EOL;
         $tracked = '⏱ ' . $trackedValue . ' ' . $trackedType . $preSalaryValue . PHP_EOL;
 
