@@ -81,7 +81,7 @@ class Telegram extends \Longman\TelegramBot\Telegram
                 $this->setChatId($message->getChat()->getId());
                 break;
             default:
-                Log::info('Unsupported');
+                Log::info('Unsupported - ' . $update->getUpdateType());
                 return Request::emptyResponse();
         }
 
