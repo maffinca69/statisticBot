@@ -20,11 +20,16 @@ class GoogleSpreadSheetParser implements ParserInterface
         $positionStatus = current($sheet['data'])['rowData'][2]['values'][1]['formattedValue'];
         $position = '🧑‍💻 ' . current($sheet['data'])['rowData'][1]['values'][1]['formattedValue'] . ' (' . $positionStatus . ')' . PHP_EOL;
 
+        $rate = current($sheet['data'])['rowData'][6]['values'][1]['formattedValue'];
+
         $trackedValue = current($sheet['data'])['rowData'][9]['values'][1]['formattedValue'];
         $trackedType = plural_form((int)$trackedValue, ['час', 'часа', 'часов']);
-        $tracked = '⏱ ' . $trackedValue . ' ' . $trackedType . PHP_EOL;
 
-        $salary = '💸 ' . current($sheet['data'])['rowData'][3]['values'][8]['formattedValue'] . PHP_EOL;
+        $salaryValue = current($sheet['data'])['rowData'][3]['values'][8]['formattedValue'];
+        $salary = '💸 ' . $salaryValue . PHP_EOL;
+        $tracked = '⏱ ' . $trackedValue . ' ' . $trackedType .
+            sprintf(' (%s)', $rate * $trackedValue < $salaryValue ? $rate * $trackedValue : $salaryValue)
+            . PHP_EOL;
 
         $text = $title . $position . $tracked . $salary;
 
