@@ -19,8 +19,7 @@ class APIExecutor
         self::$client = new Client([
             'base_uri' => config('redmine.base_uri'),
             'headers' => [
-//                'X-Redmine-API-Key' => $this->getApiKey(),
-                'X-Redmine-API-Key' => '50552de0e7f743cc8b8387e10f749fb253aabfd3',
+                'X-Redmine-API-Key' => $this->getApiKey(),
                 'Content-Type' => 'application/json'
             ]
         ]);
