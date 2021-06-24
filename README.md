@@ -35,4 +35,4 @@ php artisan queue:work
 
 
 ## Planned
-1. Test, test, test...
+1. Tests
